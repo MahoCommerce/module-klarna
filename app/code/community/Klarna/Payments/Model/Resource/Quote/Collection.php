@@ -1,12 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2015-2020 Klarna Bank AB (publ)
  * SPDX-FileCopyrightText: 2026 Maho <https://mahocommerce.com>
  * SPDX-License-Identifier: Apache-2.0
  * @package Klarna_Payments
  */
-
 /**
  * Klarna quote collection
  */
@@ -15,7 +16,7 @@ class Klarna_Payments_Model_Resource_Quote_Collection extends Mage_Core_Model_Re
     /**
      * Init
      */
-    public function _construct()
+    protected function _construct()
     {
         $this->_init('klarna_payments/quote');
     }

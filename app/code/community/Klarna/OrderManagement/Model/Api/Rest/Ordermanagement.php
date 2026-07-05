@@ -23,13 +23,13 @@ class Klarna_OrderManagement_Model_Api_Rest_Ordermanagement extends Klarna_Core_
      */
     public function acknowledgeOrder($id)
     {
-        $url = array(
+        $url = [
             'ordermanagement',
             'v1',
             'orders',
             $id,
-            'acknowledge'
-        );
+            'acknowledge',
+        ];
 
         $request = $this->getNewRequestObject()
             ->setUrl($url)
@@ -48,12 +48,12 @@ class Klarna_OrderManagement_Model_Api_Rest_Ordermanagement extends Klarna_Core_
      */
     public function getOrder($id)
     {
-        $url = array(
+        $url = [
             'ordermanagement',
             'v1',
             'orders',
-            $id
-        );
+            $id,
+        ];
 
         $request = $this->getNewRequestObject()
             ->setUrl($url)
@@ -78,13 +78,13 @@ class Klarna_OrderManagement_Model_Api_Rest_Ordermanagement extends Klarna_Core_
      */
     public function updateOrderItems($id, $data)
     {
-        $url = array(
+        $url = [
             'ordermanagement',
             'v1',
             'orders',
             $id,
-            'authorization'
-        );
+            'authorization',
+        ];
 
         $request = $this->getNewRequestObject()
             ->setUrl($url)
@@ -104,13 +104,13 @@ class Klarna_OrderManagement_Model_Api_Rest_Ordermanagement extends Klarna_Core_
      */
     public function extendAuthorization($id)
     {
-        $url = array(
+        $url = [
             'ordermanagement',
             'v1',
             'orders',
             $id,
-            'extend-authorization-time'
-        );
+            'extend-authorization-time',
+        ];
 
         $request = $this->getNewRequestObject()
             ->setUrl($url)
@@ -131,27 +131,28 @@ class Klarna_OrderManagement_Model_Api_Rest_Ordermanagement extends Klarna_Core_
      */
     public function updateMerchantReferences($id, $merchantReference1, $merchantReference2 = null)
     {
-        $url = array(
+        $url = [
             'ordermanagement',
             'v1',
             'orders',
             $id,
-            'merchant-references'
-        );
+            'merchant-references',
+        ];
 
-        $data = array(
-            'merchant_reference1' => $merchantReference1
-        );
+        $data = [
+            'merchant_reference1' => $merchantReference1,
+        ];
 
         if (null !== $merchantReference2) {
             $data['merchant_reference2'] = $merchantReference2;
         }
 
         Mage::dispatchEvent(
-            'klarna_rest_merchant_reference_update', array(
-            'order_id' => $id,
-            'data'     => $data
-            )
+            'klarna_rest_merchant_reference_update',
+            [
+                'order_id' => $id,
+                'data'     => $data,
+            ],
         );
 
         $request = $this->getNewRequestObject()
@@ -176,13 +177,13 @@ class Klarna_OrderManagement_Model_Api_Rest_Ordermanagement extends Klarna_Core_
      */
     public function updateAddresses($id, $data)
     {
-        $url = array(
+        $url = [
             'ordermanagement',
             'v1',
             'orders',
             $id,
-            'customer-details'
-        );
+            'customer-details',
+        ];
 
         $request = $this->getNewRequestObject()
             ->setUrl($url)
@@ -203,13 +204,13 @@ class Klarna_OrderManagement_Model_Api_Rest_Ordermanagement extends Klarna_Core_
      */
     public function cancelOrder($id)
     {
-        $url = array(
+        $url = [
             'ordermanagement',
             'v1',
             'orders',
             $id,
-            'cancel'
-        );
+            'cancel',
+        ];
 
         $request = $this->getNewRequestObject()
             ->setUrl($url)
@@ -234,13 +235,13 @@ class Klarna_OrderManagement_Model_Api_Rest_Ordermanagement extends Klarna_Core_
      */
     public function captureOrder($id, $data)
     {
-        $url = array(
+        $url = [
             'ordermanagement',
             'v1',
             'orders',
             $id,
-            'captures'
-        );
+            'captures',
+        ];
 
         $request = $this->getNewRequestObject()
             ->setUrl($url)
@@ -261,14 +262,14 @@ class Klarna_OrderManagement_Model_Api_Rest_Ordermanagement extends Klarna_Core_
      */
     public function getCapture($id, $captureId)
     {
-        $url = array(
+        $url = [
             'ordermanagement',
             'v1',
             'orders',
             $id,
             'captures',
-            $captureId
-        );
+            $captureId,
+        ];
 
         $request = $this->getNewRequestObject()
             ->setUrl($url)
@@ -288,15 +289,15 @@ class Klarna_OrderManagement_Model_Api_Rest_Ordermanagement extends Klarna_Core_
      */
     public function addShippingDetailsToCapture($id, $captureId, $data)
     {
-        $url = array(
+        $url = [
             'ordermanagement',
             'v1',
             'orders',
             $id,
             'captures',
             $captureId,
-            'shipping-info'
-        );
+            'shipping-info',
+        ];
 
         $request = $this->getNewRequestObject()
             ->setUrl($url)
@@ -321,15 +322,15 @@ class Klarna_OrderManagement_Model_Api_Rest_Ordermanagement extends Klarna_Core_
      */
     public function updateCaptureBillingAddress($id, $captureId, $data)
     {
-        $url = array(
+        $url = [
             'ordermanagement',
             'v1',
             'orders',
             $id,
             'captures',
             $captureId,
-            'customer-details'
-        );
+            'customer-details',
+        ];
 
         $request = $this->getNewRequestObject()
             ->setUrl($url)
@@ -350,15 +351,15 @@ class Klarna_OrderManagement_Model_Api_Rest_Ordermanagement extends Klarna_Core_
      */
     public function resendOrderInvoice($id, $captureId)
     {
-        $url = array(
+        $url = [
             'ordermanagement',
             'v1',
             'orders',
             $id,
             'captures',
             $captureId,
-            'trigger-send-out'
-        );
+            'trigger-send-out',
+        ];
 
         $request = $this->getNewRequestObject()
             ->setUrl($url)
@@ -380,13 +381,13 @@ class Klarna_OrderManagement_Model_Api_Rest_Ordermanagement extends Klarna_Core_
      */
     public function refund($id, $data)
     {
-        $url = array(
+        $url = [
             'ordermanagement',
             'v1',
             'orders',
             $id,
-            'refunds'
-        );
+            'refunds',
+        ];
 
         $request = $this->getNewRequestObject()
             ->setUrl($url)
@@ -406,13 +407,13 @@ class Klarna_OrderManagement_Model_Api_Rest_Ordermanagement extends Klarna_Core_
      */
     public function releaseAuthorization($id)
     {
-        $url = array(
+        $url = [
             'ordermanagement',
             'v1',
             'orders',
             $id,
-            'release-remaining-authorization'
-        );
+            'release-remaining-authorization',
+        ];
 
         $request = $this->getNewRequestObject()
             ->setUrl($url)

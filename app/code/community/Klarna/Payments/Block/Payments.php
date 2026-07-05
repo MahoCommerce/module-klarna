@@ -13,8 +13,9 @@
 class Klarna_Payments_Block_Payments extends Mage_Core_Block_Template
 {
     /** @var array Set of payment method categories returned from the API */
-    protected $_paymentMethodCategories = array();
+    protected $_paymentMethodCategories = [];
 
+    #[\Override]
     protected function _construct()
     {
         $session = Mage::getSingleton('checkout/session');
@@ -26,7 +27,7 @@ class Klarna_Payments_Block_Payments extends Mage_Core_Block_Template
 
     public function getRegionsUS()
     {
-        $lookupTable = array();
+        $lookupTable = [];
         $regions = Mage::getResourceModel('directory/region_collection')->addCountryFilter('US');
         foreach ($regions as $region) {
             $lookupTable[$region->getRegionId()] = $region->getCode();
@@ -65,7 +66,7 @@ class Klarna_Payments_Block_Payments extends Mage_Core_Block_Template
      */
     public function hasAuthorizationToken()
     {
-        return (bool)$this->getAuthorizationToken();
+        return (bool) $this->getAuthorizationToken();
     }
 
     /**

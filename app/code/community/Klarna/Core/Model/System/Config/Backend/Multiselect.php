@@ -17,7 +17,8 @@ class Klarna_Core_Model_System_Config_Backend_Multiselect extends Mage_Core_Mode
      *
      * @return mixed
      */
-    public function _beforeSave()
+    #[\Override]
+    protected function _beforeSave()
     {
         if ($this->getValue() == -1) {
             $this->setValue(null);

@@ -51,7 +51,7 @@ class Klarna_Core_Model_Api_Builder_Abstract extends Varien_Object
     /**
      * @var array
      */
-    protected $_orderLines = array();
+    protected $_orderLines = [];
 
     /**
      * @var Mage_Sales_Model_Abstract|Mage_Sales_Model_Quote
@@ -66,7 +66,7 @@ class Klarna_Core_Model_Api_Builder_Abstract extends Varien_Object
     /**
      * @var array
      */
-    protected $_request = array();
+    protected $_request = [];
 
     /**
      * @var bool
@@ -76,13 +76,13 @@ class Klarna_Core_Model_Api_Builder_Abstract extends Varien_Object
     /**
      * Generate types
      */
-    const GENERATE_TYPE_CREATE = 'create';
-    const GENERATE_TYPE_UPDATE = 'update';
+    public const GENERATE_TYPE_CREATE = 'create';
+    public const GENERATE_TYPE_UPDATE = 'update';
 
     /**
      * Init
      */
-    public function _construct()
+    protected function _construct()
     {
         $this->_helper = Mage::helper('klarna_core');
     }
@@ -114,7 +114,7 @@ class Klarna_Core_Model_Api_Builder_Abstract extends Varien_Object
      */
     protected function _generateRequest($type)
     {
-        return array();
+        return [];
     }
 
     /**
@@ -130,9 +130,7 @@ class Klarna_Core_Model_Api_Builder_Abstract extends Varien_Object
     /**
      * Set generated request
      *
-     * @param array  $request
      * @param string $type
-     *
      * @return $this
      */
     public function setRequest(array $request, $type = self::GENERATE_TYPE_CREATE)
@@ -142,15 +140,17 @@ class Klarna_Core_Model_Api_Builder_Abstract extends Varien_Object
         if (!$this->_inRequestSet) {
             $this->_inRequestSet = true;
             Mage::dispatchEvent(
-                "klarna_request_builder_set_request_{$type}", array(
-                'builder' => $this
-                )
+                "klarna_request_builder_set_request_{$type}",
+                [
+                    'builder' => $this,
+                ],
             );
 
             Mage::dispatchEvent(
-                'klarna_request_builder_set_request', array(
-                'builder' => $this
-                )
+                'klarna_request_builder_set_request',
+                [
+                    'builder' => $this,
+                ],
             );
             $this->_inRequestSet = false;
         }
@@ -193,7 +193,7 @@ class Klarna_Core_Model_Api_Builder_Abstract extends Varien_Object
         if (null === $this->_orderLineCollector) {
             $this->_orderLineCollector = Mage::getSingleton(
                 'klarna_core/api_builder_orderline_collector',
-                array('store' => $this->getObject()->getStore())
+                ['store' => $this->getObject()->getStore()],
             );
         }
 
@@ -239,8 +239,6 @@ class Klarna_Core_Model_Api_Builder_Abstract extends Varien_Object
     /**
      * Add an order line
      *
-     * @param array $orderLine
-     *
      * @return $this
      */
     public function addOrderLine(array $orderLine)
@@ -257,7 +255,7 @@ class Klarna_Core_Model_Api_Builder_Abstract extends Varien_Object
      */
     public function resetOrderLines()
     {
-        $this->_orderLines = array();
+        $this->_orderLines = [];
 
         return $this;
     }
@@ -272,7 +270,7 @@ class Klarna_Core_Model_Api_Builder_Abstract extends Varien_Object
      */
     protected function _getAddressData($quote, $type = null)
     {
-        $result = array();
+        $result = [];
         if ($quote->getCustomerEmail()) {
             $result['email'] = $quote->getCustomerEmail();
         }
@@ -309,7 +307,7 @@ class Klarna_Core_Model_Api_Builder_Abstract extends Varien_Object
      */
     protected function _getShippingMethods($quote)
     {
-        $rates = array();
+        $rates = [];
         if ($quote->isVirtual()) {
             return $rates;
         }
@@ -320,7 +318,7 @@ class Klarna_Core_Model_Api_Builder_Abstract extends Varien_Object
                 continue;
             }
 
-            $rates[] = array(
+            $rates[] = [
                 'id'          => $rate->getCode(),
                 'name'        => $rate->getMethodTitle(),
                 'price'       => $this->_helper->toApiFloat($rate->getPrice()),
@@ -328,8 +326,8 @@ class Klarna_Core_Model_Api_Builder_Abstract extends Varien_Object
                 'tax_amount'  => 0,
                 'tax_rate'    => 0,
                 'description' => $rate->getMethodDescription(),
-                'preselected' => $rate->getCode() == $quote->getShippingAddress()->getShippingMethod()
-            );
+                'preselected' => $rate->getCode() == $quote->getShippingAddress()->getShippingMethod(),
+            ];
         }
 
         return $rates;
@@ -345,12 +343,12 @@ class Klarna_Core_Model_Api_Builder_Abstract extends Varien_Object
     protected function _getCustomerData($quote)
     {
         if (!$quote->getCustomerIsGuest() && $quote->getCustomerDob()) {
-            return array(
-                'date_of_birth' => Varien_Date::formatDate(strtotime($quote->getCustomerDob()), false)
-            );
+            return [
+                'date_of_birth' => Varien_Date::formatDate(strtotime($quote->getCustomerDob()), false),
+            ];
         }
 
-        return array();
+        return [];
     }
 
     /**

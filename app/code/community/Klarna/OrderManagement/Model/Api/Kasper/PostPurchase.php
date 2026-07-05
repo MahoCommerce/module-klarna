@@ -22,12 +22,12 @@ class Klarna_OrderManagement_Model_Api_Kasper_PostPurchase extends Klarna_Core_M
     /**
      * API allowed shipping method code
      */
-    const KLARNA_API_SHIPPING_METHOD_HOME = "Home";
-    const KLARNA_API_SHIPPING_METHOD_PICKUPSTORE = "PickUpStore";
-    const KLARNA_API_SHIPPING_METHOD_BOXREG = "BoxReg";
-    const KLARNA_API_SHIPPING_METHOD_BOXUNREG = "BoxUnreg";
-    const KLARNA_API_SHIPPING_METHOD_PICKUPPOINT = "PickUpPoint";
-    const KLARNA_API_SHIPPING_METHOD_OWN = "Own";
+    public const KLARNA_API_SHIPPING_METHOD_HOME = 'Home';
+    public const KLARNA_API_SHIPPING_METHOD_PICKUPSTORE = 'PickUpStore';
+    public const KLARNA_API_SHIPPING_METHOD_BOXREG = 'BoxReg';
+    public const KLARNA_API_SHIPPING_METHOD_BOXUNREG = 'BoxUnreg';
+    public const KLARNA_API_SHIPPING_METHOD_PICKUPPOINT = 'PickUpPoint';
+    public const KLARNA_API_SHIPPING_METHOD_OWN = 'Own';
 
     /**
      * Acknowledge an order in order management
@@ -36,6 +36,7 @@ class Klarna_OrderManagement_Model_Api_Kasper_PostPurchase extends Klarna_Core_M
      *
      * @return Klarna_Core_Model_Api_Response
      */
+    #[\Override]
     public function acknowledgeOrder($orderId)
     {
         return $this->_getOrderManagementApi()->acknowledgeOrder($orderId);
@@ -50,6 +51,7 @@ class Klarna_OrderManagement_Model_Api_Kasper_PostPurchase extends Klarna_Core_M
      *
      * @return Klarna_Core_Model_Api_Response
      */
+    #[\Override]
     public function updateMerchantReferences($orderId, $reference1, $reference2 = null)
     {
         return $this->_getOrderManagementApi()->updateMerchantReferences($orderId, $reference1, $reference2);
@@ -64,6 +66,7 @@ class Klarna_OrderManagement_Model_Api_Kasper_PostPurchase extends Klarna_Core_M
      *
      * @return Klarna_Core_Model_Api_Response
      */
+    #[\Override]
     public function capture($orderId, $amount, $invoice = null)
     {
         $data['captured_amount'] = Mage::helper('klarna_core')->toApiFloat($amount);
@@ -93,15 +96,16 @@ class Klarna_OrderManagement_Model_Api_Kasper_PostPurchase extends Klarna_Core_M
          * For instance, you capture on Friday but won't ship until Monday. A 3 day shipping delay would be set.
          */
         $shippingDelayObject = new Varien_Object(
-            array(
-            'shipping_delay' => 0
-            )
+            [
+                'shipping_delay' => 0,
+            ],
         );
 
         Mage::dispatchEvent(
-            'klarna_capture_shipping_delay', array(
-            'shipping_delay_object' => $shippingDelayObject
-            )
+            'klarna_capture_shipping_delay',
+            [
+                'shipping_delay_object' => $shippingDelayObject,
+            ],
         );
 
         if ($shippingDelayObject->getShippingDelay()) {
@@ -129,7 +133,7 @@ class Klarna_OrderManagement_Model_Api_Kasper_PostPurchase extends Klarna_Core_M
         if ($response->getIsSuccessful()) {
             $captureId = $response->getResponseObject()->getHeader('Capture-id')
                 ?: $this->_getOrderManagementApi()->getLocationResourceId(
-                    $response->getResponseObject()->getHeader('Location')
+                    $response->getResponseObject()->getHeader('Location'),
                 );
 
             if ($captureId) {
@@ -146,7 +150,7 @@ class Klarna_OrderManagement_Model_Api_Kasper_PostPurchase extends Klarna_Core_M
                             $response->getCaptureId(),
                             $orderId,
                             $requestData['tracking'],
-                            $invoice
+                            $invoice,
                         );
                     }
 
@@ -176,7 +180,7 @@ class Klarna_OrderManagement_Model_Api_Kasper_PostPurchase extends Klarna_Core_M
                 $invoice->addComment($message, false, false);
             }
         } else {
-            $invoice->addComment("Shipping info sent to Klarna API", false, false);
+            $invoice->addComment('Shipping info sent to Klarna API', false, false);
         }
     }
 
@@ -185,18 +189,17 @@ class Klarna_OrderManagement_Model_Api_Kasper_PostPurchase extends Klarna_Core_M
      * Prepare shipping info request,For merchant who implement this feature
      * overwrite this function to add additional information
      *
-     * @param array $shippingInfo
      * @return array
      */
     public function prepareShippingInfo(array $shippingInfo)
     {
-        $data = array();
+        $data = [];
         foreach ($shippingInfo as $shipping) {
-            $data['shipping_info'][] = array(
+            $data['shipping_info'][] = [
                 'tracking_number' => $shipping['number'],
                 'shipping_method' => $this->getKlarnaShippingMethod($shipping),
-                'shipping_company' => $shipping['title']
-            );
+                'shipping_company' => $shipping['title'],
+            ];
         }
         return $data;
     }
@@ -206,7 +209,6 @@ class Klarna_OrderManagement_Model_Api_Kasper_PostPurchase extends Klarna_Core_M
      * overwrite this function to return correct method code
      * Allowed values matches (PickUpStore|Home|BoxReg|BoxUnreg|PickUpPoint|Own)
      *
-     * @param array $shipping
      * @return string
      */
     public function getKlarnaShippingMethod(array $shipping)
@@ -223,6 +225,7 @@ class Klarna_OrderManagement_Model_Api_Kasper_PostPurchase extends Klarna_Core_M
      *
      * @return Klarna_Core_Model_Api_Response
      */
+    #[\Override]
     public function refund($orderId, $amount, $creditMemo = null)
     {
         $data['refunded_amount'] = Mage::helper('klarna_core')->toApiFloat($amount);
@@ -258,6 +261,7 @@ class Klarna_OrderManagement_Model_Api_Kasper_PostPurchase extends Klarna_Core_M
      *
      * @return Klarna_Core_Model_Api_Response
      */
+    #[\Override]
     public function cancel($orderId)
     {
         return $this->_getOrderManagementApi()->cancelOrder($orderId);
@@ -270,6 +274,7 @@ class Klarna_OrderManagement_Model_Api_Kasper_PostPurchase extends Klarna_Core_M
      *
      * @return Klarna_Core_Model_Api_Response
      */
+    #[\Override]
     public function release($orderId)
     {
         return $this->_getOrderManagementApi()->releaseAuthorization($orderId);
@@ -286,17 +291,14 @@ class Klarna_OrderManagement_Model_Api_Kasper_PostPurchase extends Klarna_Core_M
      *
      * @return int
      */
+    #[\Override]
     public function getFraudStatus($orderId)
     {
-        switch ($this->getOrder($orderId)->getFraudStatus()) {
-            case self::ORDER_FRAUD_STATUS_ACCEPTED:
-                return 1;
-            case self::ORDER_FRAUD_STATUS_REJECTED:
-                return -1;
-            case self::ORDER_FRAUD_STATUS_PENDING:
-            default:
-                return 0;
-        }
+        return match ($this->getOrder($orderId)->getFraudStatus()) {
+            self::ORDER_FRAUD_STATUS_ACCEPTED => 1,
+            self::ORDER_FRAUD_STATUS_REJECTED => -1,
+            default => 0,
+        };
     }
 
     /**
@@ -306,6 +308,7 @@ class Klarna_OrderManagement_Model_Api_Kasper_PostPurchase extends Klarna_Core_M
      *
      * @return Klarna_Core_Model_Api_Response
      */
+    #[\Override]
     public function getOrder($orderId)
     {
         return $this->_getOrderManagementApi()->getOrder($orderId);

@@ -17,31 +17,46 @@ $installer->startSetup();
 $table = $installer->getConnection()
     ->newTable($installer->getTable('klarna_core/order'))
     ->addColumn(
-        'klarna_order_id', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
-        'identity' => true,
-        'unsigned' => true,
-        'nullable' => false,
-        'primary'  => true,
-        ), 'Order Id'
+        'klarna_order_id',
+        Varien_Db_Ddl_Table::TYPE_INTEGER,
+        null,
+        [
+            'identity' => true,
+            'unsigned' => true,
+            'nullable' => false,
+            'primary'  => true,
+        ],
+        'Order Id',
     )
-    ->addColumn('session_id', Varien_Db_Ddl_Table::TYPE_TEXT, 255, array(), 'Session Id')
-    ->addColumn('reservation_id', Varien_Db_Ddl_Table::TYPE_TEXT, 255, array(), 'Reservation Id')
+    ->addColumn('session_id', Varien_Db_Ddl_Table::TYPE_TEXT, 255, [], 'Session Id')
+    ->addColumn('reservation_id', Varien_Db_Ddl_Table::TYPE_TEXT, 255, [], 'Reservation Id')
     ->addColumn(
-        'order_id', Varien_Db_Ddl_Table::TYPE_INTEGER, null, array(
-        'unsigned' => true,
-        'nullable' => false,
-        ), 'Order Id'
+        'order_id',
+        Varien_Db_Ddl_Table::TYPE_INTEGER,
+        null,
+        [
+            'unsigned' => true,
+            'nullable' => false,
+        ],
+        'Order Id',
     )
     ->addColumn(
-        'is_acknowledged', Varien_Db_Ddl_Table::TYPE_SMALLINT, null, array(
-        'nullable' => false,
-        'default'  => '0',
-        ), 'Is Acknowledged'
+        'is_acknowledged',
+        Varien_Db_Ddl_Table::TYPE_SMALLINT,
+        null,
+        [
+            'nullable' => false,
+            'default'  => '0',
+        ],
+        'Is Acknowledged',
     )
     ->addForeignKey(
         $installer->getFkName('klarna_core/order', 'order_id', 'sales/order', 'entity_id'),
-        'order_id', $installer->getTable('sales/order'), 'entity_id',
-        Varien_Db_Ddl_Table::ACTION_CASCADE, Varien_Db_Ddl_Table::ACTION_CASCADE
+        'order_id',
+        $installer->getTable('sales/order'),
+        'entity_id',
+        Varien_Db_Ddl_Table::ACTION_CASCADE,
+        Varien_Db_Ddl_Table::ACTION_CASCADE,
     )
     ->setComment('Klarna Order');
 $installer->getConnection()->createTable($table);

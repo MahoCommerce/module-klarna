@@ -19,6 +19,7 @@ class Klarna_Core_Model_Api_Builder_Orderline_Reward extends Klarna_Core_Model_A
      *
      * @return $this
      */
+    #[\Override]
     public function collect($checkout)
     {
         /** @var Mage_Sales_Model_Quote $quote */
@@ -31,15 +32,15 @@ class Klarna_Core_Model_Api_Builder_Orderline_Reward extends Klarna_Core_Model_A
             $value  = $helper->toApiFloat($total->getValue());
 
             $checkout->addData(
-                array(
-                'reward_unit_price'   => $value,
-                'reward_tax_rate'     => 0,
-                'reward_total_amount' => $value,
-                'reward_tax_amount'   => 0,
-                'reward_title'        => $total->getTitle(),
-                'reward_reference'    => $total->getCode()
+                [
+                    'reward_unit_price'   => $value,
+                    'reward_tax_rate'     => 0,
+                    'reward_total_amount' => $value,
+                    'reward_tax_amount'   => 0,
+                    'reward_title'        => $total->getTitle(),
+                    'reward_reference'    => $total->getCode(),
 
-                )
+                ],
             );
         }
 
@@ -53,20 +54,21 @@ class Klarna_Core_Model_Api_Builder_Orderline_Reward extends Klarna_Core_Model_A
      *
      * @return $this
      */
+    #[\Override]
     public function fetch($checkout)
     {
         if ($checkout->getRewardTotalAmount()) {
             $checkout->addOrderLine(
-                array(
-                'type'             => Klarna_Core_Model_Api_Builder_Orderline_Discount::ITEM_TYPE_DISCOUNT,
-                'reference'        => $checkout->getRewardReference(),
-                'name'             => $checkout->getRewardTitle(),
-                'quantity'         => 1,
-                'unit_price'       => $checkout->getRewardUnitPrice(),
-                'tax_rate'         => $checkout->getRewardTaxRate(),
-                'total_amount'     => $checkout->getRewardTotalAmount(),
-                'total_tax_amount' => $checkout->getRewardTaxAmount(),
-                )
+                [
+                    'type'             => Klarna_Core_Model_Api_Builder_Orderline_Discount::ITEM_TYPE_DISCOUNT,
+                    'reference'        => $checkout->getRewardReference(),
+                    'name'             => $checkout->getRewardTitle(),
+                    'quantity'         => 1,
+                    'unit_price'       => $checkout->getRewardUnitPrice(),
+                    'tax_rate'         => $checkout->getRewardTaxRate(),
+                    'total_amount'     => $checkout->getRewardTotalAmount(),
+                    'total_tax_amount' => $checkout->getRewardTaxAmount(),
+                ],
             );
         }
 

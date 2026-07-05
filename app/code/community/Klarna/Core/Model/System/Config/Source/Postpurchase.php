@@ -20,22 +20,23 @@ class Klarna_Core_Model_System_Config_Source_Postpurchase extends Mage_Core_Mode
     public function toOptionArray()
     {
         $helper  = Mage::helper('klarna_core');
-        $options = array();
+        $options = [];
 
         if ($types = $helper->getPostPurchaseApiType()) {
             foreach ($types as $type) {
-                $options[] = array(
+                $options[] = [
                     'label' => Mage::helper('klarna_core')->__($type->getLabel()),
-                    'value' => $type->getCode()
-                );
+                    'value' => $type->getCode(),
+                ];
             }
         }
 
         array_unshift(
-            $options, array(
-            'label' => $helper->__('Disabled'),
-            'value' => null
-            )
+            $options,
+            [
+                'label' => $helper->__('Disabled'),
+                'value' => null,
+            ],
         );
 
         return $options;

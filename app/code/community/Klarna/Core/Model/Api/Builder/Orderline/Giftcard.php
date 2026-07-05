@@ -19,6 +19,7 @@ class Klarna_Core_Model_Api_Builder_Orderline_Giftcard extends Klarna_Core_Model
      *
      * @return $this
      */
+    #[\Override]
     public function collect($checkout)
     {
         /** @var Mage_Sales_Model_Quote $quote */
@@ -31,15 +32,15 @@ class Klarna_Core_Model_Api_Builder_Orderline_Giftcard extends Klarna_Core_Model
             $value  = $helper->toApiFloat($total->getValue());
 
             $checkout->addData(
-                array(
-                'giftcardaccount_unit_price'   => $value,
-                'giftcardaccount_tax_rate'     => 0,
-                'giftcardaccount_total_amount' => $value,
-                'giftcardaccount_tax_amount'   => 0,
-                'giftcardaccount_title'        => $total->getTitle(),
-                'giftcardaccount_reference'    => $total->getCode()
+                [
+                    'giftcardaccount_unit_price'   => $value,
+                    'giftcardaccount_tax_rate'     => 0,
+                    'giftcardaccount_total_amount' => $value,
+                    'giftcardaccount_tax_amount'   => 0,
+                    'giftcardaccount_title'        => $total->getTitle(),
+                    'giftcardaccount_reference'    => $total->getCode(),
 
-                )
+                ],
             );
         }
 
@@ -53,20 +54,21 @@ class Klarna_Core_Model_Api_Builder_Orderline_Giftcard extends Klarna_Core_Model
      *
      * @return $this
      */
+    #[\Override]
     public function fetch($checkout)
     {
         if ($checkout->getGiftcardaccountTotalAmount()) {
             $checkout->addOrderLine(
-                array(
-                'type'             => Klarna_Core_Model_Api_Builder_Orderline_Discount::ITEM_TYPE_DISCOUNT,
-                'reference'        => $checkout->getGiftcardaccountReference(),
-                'name'             => $checkout->getGiftcardaccountTitle(),
-                'quantity'         => 1,
-                'unit_price'       => $checkout->getGiftcardaccountUnitPrice(),
-                'tax_rate'         => $checkout->getGiftcardaccountTaxRate(),
-                'total_amount'     => $checkout->getGiftcardaccountTotalAmount(),
-                'total_tax_amount' => $checkout->getGiftcardaccountTaxAmount(),
-                )
+                [
+                    'type'             => Klarna_Core_Model_Api_Builder_Orderline_Discount::ITEM_TYPE_DISCOUNT,
+                    'reference'        => $checkout->getGiftcardaccountReference(),
+                    'name'             => $checkout->getGiftcardaccountTitle(),
+                    'quantity'         => 1,
+                    'unit_price'       => $checkout->getGiftcardaccountUnitPrice(),
+                    'tax_rate'         => $checkout->getGiftcardaccountTaxRate(),
+                    'total_amount'     => $checkout->getGiftcardaccountTotalAmount(),
+                    'total_tax_amount' => $checkout->getGiftcardaccountTaxAmount(),
+                ],
             );
         }
 

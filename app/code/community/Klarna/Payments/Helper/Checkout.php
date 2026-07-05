@@ -35,9 +35,9 @@ class Klarna_Payments_Helper_Checkout extends Mage_Core_Helper_Abstract
     /**
      * Hash check values
      */
-    const HASH_CHECK_ITEMS_CHANGED = 'items_changed';
-    const HASH_CHECK_CHANGED       = 'change';
-    const HASH_CHECK_NO_CHANGE     = 'no_change';
+    public const HASH_CHECK_ITEMS_CHANGED = 'items_changed';
+    public const HASH_CHECK_CHANGED       = 'change';
+    public const HASH_CHECK_NO_CHANGE     = 'no_change';
 
     /**
      * Get checkout design config value
@@ -50,13 +50,11 @@ class Klarna_Payments_Helper_Checkout extends Mage_Core_Helper_Abstract
     {
         $designOptions = Mage::getStoreConfig('checkout/klarna_payments_design', $store);
 
-        return is_array($designOptions) ? $designOptions : array();
+        return is_array($designOptions) ? $designOptions : [];
     }
 
     /**
      * Cancel the authorization token for a Klarna Payments Quote
-     *
-     * @param Klarna_Payments_Model_Quote $klarnaQuote
      *
      * @return bool
      */
@@ -73,9 +71,9 @@ class Klarna_Payments_Helper_Checkout extends Mage_Core_Helper_Abstract
                         sprintf(
                             'Unable to cancel authorization token %s for quote #%d',
                             $klarnaQuote->getAuthorizationToken(),
-                            $klarnaQuote->getQuoteId()
-                        )
-                    )
+                            $klarnaQuote->getQuoteId(),
+                        ),
+                    ),
                 );
             } else {
                 $result = true;
@@ -95,25 +93,25 @@ class Klarna_Payments_Helper_Checkout extends Mage_Core_Helper_Abstract
     {
         $checkoutSession = Mage::getSingleton('checkout/session');
         $createRequest   = $this->getPurchaseApiInstance()->getGeneratedCreateRequest();
-        $itemsToCheck    = array(
+        $itemsToCheck    = [
             'purchase_country', 'purchase_currency', 'locale', 'order_amount', 'order_tax_amount', 'order_lines',
-            'billing_address', 'shipping_address'
-        );
-        $checkItems      = array();
+            'billing_address', 'shipping_address',
+        ];
+        $checkItems      = [];
         foreach ($itemsToCheck as $item) {
             if (isset($createRequest[$item])) {
                 $checkItems[$item] = $createRequest[$item];
             }
         }
 
-        $orderItemRequestToken = hash('sha256', $checkoutSession->getQuoteId() . ':' . Zend_Json::encode($checkItems));
-        $requestToken          = hash('sha256', $checkoutSession->getQuoteId() . ':' . Zend_Json::encode($createRequest));
-        
+        $orderItemRequestToken = hash('sha256', $checkoutSession->getQuoteId() . ':' . json_encode($checkItems));
+        $requestToken          = hash('sha256', $checkoutSession->getQuoteId() . ':' . json_encode($createRequest));
+
         $this->_requestHashes = new Varien_Object(
-            array(
-            'order_item_request_token' => $orderItemRequestToken,
-            'request_token'            => $requestToken
-            )
+            [
+                'order_item_request_token' => $orderItemRequestToken,
+                'request_token'            => $requestToken,
+            ],
         );
 
         return $this->_requestHashes;
@@ -189,7 +187,7 @@ class Klarna_Payments_Helper_Checkout extends Mage_Core_Helper_Abstract
             return false;
         }
 
-        return (bool)($this->getKlarnaQuote()->getQuoteId());
+        return (bool) ($this->getKlarnaQuote()->getQuoteId());
     }
 
     /**
@@ -293,8 +291,6 @@ class Klarna_Payments_Helper_Checkout extends Mage_Core_Helper_Abstract
     /**
      * Set the Klarna session id
      *
-     * @param Varien_Object $klarnaPayments
-     *
      * @return $this
      */
     public function setKlarnaQuoteKlarnaTokens(Varien_Object $klarnaPayments)
@@ -351,11 +347,11 @@ class Klarna_Payments_Helper_Checkout extends Mage_Core_Helper_Abstract
     {
         $klarnaQuote = Mage::getModel('klarna_payments/quote');
         $klarnaQuote->setData(
-            array(
-            'session_id' => $klarnaPayments->getSessionId(),
-            'is_active'  => 1,
-            'quote_id'   => $this->getQuote()->getId(),
-            )
+            [
+                'session_id' => $klarnaPayments->getSessionId(),
+                'is_active'  => 1,
+                'quote_id'   => $this->getQuote()->getId(),
+            ],
         );
 
         if ($klarnaPayments->getClientToken()) {

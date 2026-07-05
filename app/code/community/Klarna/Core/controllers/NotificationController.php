@@ -20,7 +20,7 @@ class Klarna_Core_NotificationController extends Mage_Core_Controller_Front_Acti
     /**
      * Controller construct
      */
-    public function _construct()
+    protected function _construct()
     {
         $this->_helper = Mage::helper('klarna_core');
     }
@@ -68,7 +68,7 @@ class Klarna_Core_NotificationController extends Mage_Core_Controller_Front_Acti
                     case Klarna_Core_Model_Api_ApiTypeAbstract::ORDER_NOTIFICATION_FRAUD_STOPPED:
                         $order->addStatusHistoryComment(
                             $this->_helper->__('Suspected Fraud: DO NOT SHIP. If already shipped, ' .
-                        'please attempt to stop the carrier from delivering.')
+                        'please attempt to stop the carrier from delivering.'),
                         );
                         $payment->setNotificationResult(true);
                         $payment->registerPaymentReviewAction(Mage_Sales_Model_Order_Payment::REVIEW_ACTION_DENY, false);
@@ -80,23 +80,24 @@ class Klarna_Core_NotificationController extends Mage_Core_Controller_Front_Acti
                 }
 
                 $statusObject = new Varien_Object(
-                    array(
-                    'status' => $payment->getMethodInstance()->getConfigData('order_status')
-                    )
+                    [
+                        'status' => $payment->getMethodInstance()->getConfigData('order_status'),
+                    ],
                 );
 
                 Mage::dispatchEvent(
-                    'klarna_push_notification_before_set_state', array(
-                    'order'         => $order,
-                    'klarna_order'  => $klarnaOrder,
-                    'status_object' => $statusObject
-                    )
+                    'klarna_push_notification_before_set_state',
+                    [
+                        'order'         => $order,
+                        'klarna_order'  => $klarnaOrder,
+                        'status_object' => $statusObject,
+                    ],
                 );
 
                 if (Mage_Sales_Model_Order::STATE_PROCESSING == $order->getState()) {
                     $order->addStatusHistoryComment(
                         $this->_helper->__('Order processed by Klarna.'),
-                        $statusObject->getStatus()
+                        $statusObject->getStatus(),
                     );
                 }
 
@@ -113,11 +114,11 @@ class Klarna_Core_NotificationController extends Mage_Core_Controller_Front_Acti
             $this->getResponse()->setHttpResponseCode(400);
             $this->getResponse()->setBody(
                 Mage::helper('core')->jsonEncode(
-                    array(
-                    'error'   => 400,
-                    'message' => $e->getMessage(),
-                    )
-                )
+                    [
+                        'error'   => 400,
+                        'message' => $e->getMessage(),
+                    ],
+                ),
             );
             Mage::logException($e);
         } catch (Exception $e) {
@@ -138,9 +139,9 @@ class Klarna_Core_NotificationController extends Mage_Core_Controller_Front_Acti
         $order              = null;
         $sessionId          = $this->getRequest()->getParam('id');
         $responseCodeObject = new Varien_Object(
-            array(
-            'response_code' => 200
-            )
+            [
+                'response_code' => 200,
+            ],
         );
 
         try {
@@ -154,11 +155,12 @@ class Klarna_Core_NotificationController extends Mage_Core_Controller_Front_Acti
             $store = $order->getStore();
 
             Mage::dispatchEvent(
-                'klarna_push_notification_before', array(
-                'order'                => $order,
-                'klarna_order_id'      => $sessionId,
-                'response_code_object' => $responseCodeObject,
-                )
+                'klarna_push_notification_before',
+                [
+                    'order'                => $order,
+                    'klarna_order_id'      => $sessionId,
+                    'response_code_object' => $responseCodeObject,
+                ],
             );
 
             // Add comment to order and update status if still in payment review
@@ -168,42 +170,45 @@ class Klarna_Core_NotificationController extends Mage_Core_Controller_Front_Acti
                 $payment->registerPaymentReviewAction(Mage_Sales_Model_Order_Payment::REVIEW_ACTION_UPDATE, true);
 
                 $statusObject = new Varien_Object(
-                    array(
-                    'status' => $payment->getMethodInstance()->getConfigData('order_status')
-                    )
+                    [
+                        'status' => $payment->getMethodInstance()->getConfigData('order_status'),
+                    ],
                 );
 
                 Mage::dispatchEvent(
-                    'klarna_push_notification_before_set_state', array(
-                    'order'         => $order,
-                    'klarna_order'  => $klarnaOrder,
-                    'status_object' => $statusObject
-                    )
+                    'klarna_push_notification_before_set_state',
+                    [
+                        'order'         => $order,
+                        'klarna_order'  => $klarnaOrder,
+                        'status_object' => $statusObject,
+                    ],
                 );
 
                 if (Mage_Sales_Model_Order::STATE_PROCESSING == $order->getState()) {
                     $order->addStatusHistoryComment(
                         $this->_helper->__('Order processed by Klarna.'),
-                        $statusObject->getStatus()
+                        $statusObject->getStatus(),
                     );
                 }
             }
 
             $checkoutType = $this->_helper->getStoreApiTypeCode($store);
             Mage::dispatchEvent(
-                "klarna_push_notification_after_type_{$checkoutType}", array(
-                'order'                => $order,
-                'klarna_order'         => $klarnaOrder,
-                'response_code_object' => $responseCodeObject,
-                )
+                "klarna_push_notification_after_type_{$checkoutType}",
+                [
+                    'order'                => $order,
+                    'klarna_order'         => $klarnaOrder,
+                    'response_code_object' => $responseCodeObject,
+                ],
             );
 
             Mage::dispatchEvent(
-                'klarna_push_notification_after', array(
-                'order'                => $order,
-                'klarna_order'         => $klarnaOrder,
-                'response_code_object' => $responseCodeObject,
-                )
+                'klarna_push_notification_after',
+                [
+                    'order'                => $order,
+                    'klarna_order'         => $klarnaOrder,
+                    'response_code_object' => $responseCodeObject,
+                ],
             );
 
             try {
@@ -231,39 +236,42 @@ class Klarna_Core_NotificationController extends Mage_Core_Controller_Front_Acti
             }
 
             $order->save();
-        } catch (Klarna_Core_Exception $e) {
+        } catch (Klarna_Core_Exception) {
             $responseCodeObject->setResponseCode(500);
             $cancelObject = new Varien_Object(
-                array(
-                'cancel_order' => true
-                )
+                [
+                    'cancel_order' => true,
+                ],
             );
             Mage::dispatchEvent(
-                'klarna_push_notification_order_not_found_cancel_before', array(
-                'session_id'           => $sessionId,
-                'cancel_object'        => $cancelObject,
-                'response_code_object' => $responseCodeObject,
-                'controller_action'    => $this
-                )
+                'klarna_push_notification_order_not_found_cancel_before',
+                [
+                    'session_id'           => $sessionId,
+                    'cancel_object'        => $cancelObject,
+                    'response_code_object' => $responseCodeObject,
+                    'controller_action'    => $this,
+                ],
             );
 
             Mage::dispatchEvent(
-                'klarna_push_notification_order_not_found_cancel', array(
-                'session_id'           => $sessionId,
-                'cancel_object'        => $cancelObject,
-                'response_code_object' => $responseCodeObject,
-                'controller_action'    => $this
-                )
+                'klarna_push_notification_order_not_found_cancel',
+                [
+                    'session_id'           => $sessionId,
+                    'cancel_object'        => $cancelObject,
+                    'response_code_object' => $responseCodeObject,
+                    'controller_action'    => $this,
+                ],
             );
         } catch (Exception $e) {
             $responseCodeObject->setResponseCode(500);
             Mage::dispatchEvent(
-                'klarna_push_notification_failed', array(
-                'order'                => $order,
-                'klarna_order_id'      => $sessionId,
-                'response_code_object' => $responseCodeObject,
-                'controller_action'    => $this
-                )
+                'klarna_push_notification_failed',
+                [
+                    'order'                => $order,
+                    'klarna_order_id'      => $sessionId,
+                    'response_code_object' => $responseCodeObject,
+                    'controller_action'    => $this,
+                ],
             );
             Mage::logException($e);
         }
@@ -302,8 +310,6 @@ class Klarna_Core_NotificationController extends Mage_Core_Controller_Front_Acti
      * Send bad request response header
      *
      * @param array|string|null $message
-     *
-     * @throws Zend_Controller_Response_Exception
      */
     protected function _sendBadRequestResponse($message = null)
     {
@@ -319,10 +325,10 @@ class Klarna_Core_NotificationController extends Mage_Core_Controller_Front_Acti
         $this->getResponse()->setHttpResponseCode(400);
         $this->getResponse()->setBody(
             Mage::helper('core')->jsonEncode(
-                array(
-                'error_type' => $message
-                )
-            )
+                [
+                    'error_type' => $message,
+                ],
+            ),
         );
     }
 }

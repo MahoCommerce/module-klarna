@@ -15,17 +15,15 @@ class Klarna_Payments_Model_Api_Rest_Payments extends Klarna_Core_Model_Api_Rest
     /**
      * Create new session
      *
-     * @param array $data
-     *
      * @return Klarna_Core_Model_Api_Rest_Client_Response
      */
     public function createSession(array $data)
     {
-        $url = array(
+        $url = [
             'payments',
             'v1',
-            'sessions'
-        );
+            'sessions',
+        ];
 
         $request = $this->getNewRequestObject()
             ->setUrl($url)
@@ -41,23 +39,22 @@ class Klarna_Payments_Model_Api_Rest_Payments extends Klarna_Core_Model_Api_Rest
      * Update session
      *
      * @param string $id
-     * @param array  $data
      *
      * @return Klarna_Core_Model_Api_Rest_Client_Response
      * @throws Klarna_Core_Model_Api_Exception
      */
-    public function updateSession($id = null, array $data = array())
+    public function updateSession($id = null, array $data = [])
     {
         if (null === $id) {
             throw new Klarna_Core_Model_Api_Exception('Klarna session id required for update');
         }
 
-        $url = array(
+        $url = [
             'payments',
             'v1',
             'sessions',
-            $id
-        );
+            $id,
+        ];
 
         $request = $this->getNewRequestObject()
             ->setUrl($url)
@@ -81,12 +78,12 @@ class Klarna_Payments_Model_Api_Rest_Payments extends Klarna_Core_Model_Api_Rest
             throw new Klarna_Core_Model_Api_Exception('Klarna session id required for the read method');
         }
 
-        $url = array(
+        $url = [
             'payments',
             'v1',
             'sessions',
-            $id
-        );
+            $id,
+        ];
 
         $request = $this->getNewRequestObject()->setUrl($url);
 
@@ -97,24 +94,23 @@ class Klarna_Payments_Model_Api_Rest_Payments extends Klarna_Core_Model_Api_Rest
      * Place order
      *
      * @param string $id
-     * @param array  $data
      *
      * @return Klarna_Core_Model_Api_Rest_Client_Response
      * @throws Klarna_Core_Model_Api_Exception
      */
-    public function placeOrder($id = null, array $data = array())
+    public function placeOrder($id = null, array $data = [])
     {
         if (null === $id) {
             throw new Klarna_Core_Model_Api_Exception('Klarna token id required to place order');
         }
 
-        $url = array(
+        $url = [
             'payments',
             'v1',
             'authorizations',
             $id,
-            'order'
-        );
+            'order',
+        ];
 
         $request = $this->getNewRequestObject()
             ->setUrl($url)
@@ -140,12 +136,12 @@ class Klarna_Payments_Model_Api_Rest_Payments extends Klarna_Core_Model_Api_Rest
             throw new Klarna_Core_Model_Api_Exception('Klarna token id required to cancel authorization');
         }
 
-        $url = array(
+        $url = [
             'payments',
             'v1',
             'authorizations',
-            $id
-        );
+            $id,
+        ];
 
         $request = $this->getNewRequestObject()
             ->setUrl($url)

@@ -38,10 +38,11 @@ abstract class Klarna_Core_Model_Api_Rest_Client_Abstract extends Varien_Object
     public function getRestClient()
     {
         return Mage::getSingleton(
-            'klarna_core/api_rest_client', array(
-            'config'        => $this->_getRequestClientConfig(),
-            'log_file_name' => 'klarna_rest_request.log'
-            )
+            'klarna_core/api_rest_client',
+            [
+                'config'        => $this->_getRequestClientConfig(),
+                'log_file_name' => 'klarna_rest_request.log',
+            ],
         );
     }
 
@@ -84,7 +85,7 @@ abstract class Klarna_Core_Model_Api_Rest_Client_Abstract extends Varien_Object
             $location = $location->getResponseObject()->getHeader('Location');
         }
 
-        $location      = rtrim($location, '/');
+        $location      = rtrim((string) $location, '/');
         $locationArray = explode('/', $location);
 
         return array_pop($locationArray);
@@ -102,18 +103,19 @@ abstract class Klarna_Core_Model_Api_Rest_Client_Abstract extends Varien_Object
             : $this->getConfig()->getProductionUrl();
 
         $config = new Varien_Object(
-            array(
-            'auth_username' => Mage::getStoreConfig('klarna/api/merchant_id', $this->getStore()),
-            'auth_password' => Mage::getStoreConfig('klarna/api/shared_secret', $this->getStore()),
-            'base_url'      => $baseUrl,
-            'debug'         => Mage::getStoreConfigFlag('klarna/api/debug', $this->getStore())
-            )
+            [
+                'auth_username' => Mage::getStoreConfig('klarna/api/merchant_id', $this->getStore()),
+                'auth_password' => Mage::getStoreConfig('klarna/api/shared_secret', $this->getStore()),
+                'base_url'      => $baseUrl,
+                'debug'         => Mage::getStoreConfigFlag('klarna/api/debug', $this->getStore()),
+            ],
         );
 
         Mage::dispatchEvent(
-            'klarna_core_get_request_config', array(
-            'request_configuration' => $config
-            )
+            'klarna_core_get_request_config',
+            [
+                'request_configuration' => $config,
+            ],
         );
 
         return $config;

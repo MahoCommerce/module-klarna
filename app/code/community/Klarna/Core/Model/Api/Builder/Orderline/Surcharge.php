@@ -12,7 +12,7 @@
  */
 class Klarna_Core_Model_Api_Builder_Orderline_Surcharge extends Klarna_Core_Model_Api_Builder_Orderline_Abstract
 {
-    const ITEM_TYPE_SURCHARGE = 'surcharge';
+    public const ITEM_TYPE_SURCHARGE = 'surcharge';
 
     /**
      * Collect totals process.
@@ -21,6 +21,7 @@ class Klarna_Core_Model_Api_Builder_Orderline_Surcharge extends Klarna_Core_Mode
      *
      * @return $this
      */
+    #[\Override]
     public function collect($checkout)
     {
         $object = $checkout->getObject();
@@ -31,8 +32,8 @@ class Klarna_Core_Model_Api_Builder_Orderline_Surcharge extends Klarna_Core_Mode
         }
 
         $totalTax = 0;
-        $name = array();
-        $reference = array();
+        $name = [];
+        $reference = [];
 
         foreach ($object->getAllItems() as $item) {
             $qtyMultiplier = 1;
@@ -107,13 +108,13 @@ class Klarna_Core_Model_Api_Builder_Orderline_Surcharge extends Klarna_Core_Mode
         $reference = array_unique($reference);
 
         $checkout->addData(
-            array(
-            'surcharge_unit_price'   => $helper->toApiFloat($totalTax),
-            'surcharge_total_amount' => $helper->toApiFloat($totalTax),
-            'surcharge_reference'        => implode(',', $reference),
-            'surcharge_name'             => implode(',', $name)
+            [
+                'surcharge_unit_price'   => $helper->toApiFloat($totalTax),
+                'surcharge_total_amount' => $helper->toApiFloat($totalTax),
+                'surcharge_reference'        => implode(',', $reference),
+                'surcharge_name'             => implode(',', $name),
 
-            )
+            ],
         );
 
         return $this;
@@ -126,20 +127,21 @@ class Klarna_Core_Model_Api_Builder_Orderline_Surcharge extends Klarna_Core_Mode
      *
      * @return $this
      */
+    #[\Override]
     public function fetch($checkout)
     {
         if ($checkout->getSurchargeUnitPrice()) {
             $checkout->addOrderLine(
-                array(
-                'type'             => self::ITEM_TYPE_SURCHARGE,
-                'reference'        => $checkout->getSurchargeReference(),
-                'name'             => $checkout->getSurchargeName(),
-                'quantity'         => 1,
-                'unit_price'       => $checkout->getSurchargeUnitPrice(),
-                'tax_rate'         => 0,
-                'total_amount'     => $checkout->getSurchargeTotalAmount(),
-                'total_tax_amount' => 0,
-                )
+                [
+                    'type'             => self::ITEM_TYPE_SURCHARGE,
+                    'reference'        => $checkout->getSurchargeReference(),
+                    'name'             => $checkout->getSurchargeName(),
+                    'quantity'         => 1,
+                    'unit_price'       => $checkout->getSurchargeUnitPrice(),
+                    'tax_rate'         => 0,
+                    'total_amount'     => $checkout->getSurchargeTotalAmount(),
+                    'total_tax_amount' => 0,
+                ],
             );
         }
 

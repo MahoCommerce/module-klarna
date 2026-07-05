@@ -12,7 +12,7 @@
  */
 class Klarna_Core_Model_Api_Builder_Orderline_Tax extends Klarna_Core_Model_Api_Builder_Orderline_Abstract
 {
-    const ITEM_TYPE_TAX = 'sales_tax';
+    public const ITEM_TYPE_TAX = 'sales_tax';
 
     /**
      * Collect totals process.
@@ -21,6 +21,7 @@ class Klarna_Core_Model_Api_Builder_Orderline_Tax extends Klarna_Core_Model_Api_
      *
      * @return $this
      */
+    #[\Override]
     public function collect($checkout)
     {
         $object = $checkout->getObject();
@@ -38,11 +39,11 @@ class Klarna_Core_Model_Api_Builder_Orderline_Tax extends Klarna_Core_Model_Api_
         }
 
         $checkout->addData(
-            array(
-            'tax_unit_price'   => $helper->toApiFloat($totalTax),
-            'tax_total_amount' => $helper->toApiFloat($totalTax)
+            [
+                'tax_unit_price'   => $helper->toApiFloat($totalTax),
+                'tax_total_amount' => $helper->toApiFloat($totalTax),
 
-            )
+            ],
         );
 
         return $this;
@@ -55,22 +56,23 @@ class Klarna_Core_Model_Api_Builder_Orderline_Tax extends Klarna_Core_Model_Api_
      *
      * @return $this
      */
+    #[\Override]
     public function fetch($checkout)
     {
         $helper = Mage::helper('klarna_core');
 
         if ($checkout->getTaxUnitPrice()) {
             $checkout->addOrderLine(
-                array(
-                'type'             => self::ITEM_TYPE_TAX,
-                'reference'        => $helper->__('Sales Tax'),
-                'name'             => $helper->__('Sales Tax'),
-                'quantity'         => 1,
-                'unit_price'       => $checkout->getTaxUnitPrice(),
-                'tax_rate'         => 0,
-                'total_amount'     => $checkout->getTaxTotalAmount(),
-                'total_tax_amount' => 0,
-                )
+                [
+                    'type'             => self::ITEM_TYPE_TAX,
+                    'reference'        => $helper->__('Sales Tax'),
+                    'name'             => $helper->__('Sales Tax'),
+                    'quantity'         => 1,
+                    'unit_price'       => $checkout->getTaxUnitPrice(),
+                    'tax_rate'         => 0,
+                    'total_amount'     => $checkout->getTaxTotalAmount(),
+                    'total_tax_amount' => 0,
+                ],
             );
         }
 

@@ -22,6 +22,7 @@ class Klarna_Payments_Block_Mark extends Mage_Core_Block_Template
         $this->method_code = $method_code;
     }
 
+    #[\Override]
     protected function _toHtml()
     {
         /** @var Klarna_Payments_Model_Filter $filter */
@@ -69,6 +70,7 @@ class Klarna_Payments_Block_Mark extends Mage_Core_Block_Template
         return $this;
     }
 
+    #[\Override]
     protected function _construct()
     {
         $this->setCacheLifetime(null);

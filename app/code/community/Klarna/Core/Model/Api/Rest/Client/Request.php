@@ -37,33 +37,33 @@ class Klarna_Core_Model_Api_Rest_Client_Request extends Varien_Object
      *
      * @var string
      */
-    const RESPONSE_TYPE_SINGLE = 'klarna_core/api_rest_client_response';
+    public const RESPONSE_TYPE_SINGLE = 'klarna_core/api_rest_client_response';
 
     /**
      * Single item class name response
      *
      * @var string
      */
-    const RESPONSE_TYPE_RAW = 'raw';
+    public const RESPONSE_TYPE_RAW = 'raw';
 
     /**
      * Request parameter format array
      *
      * @var string
      */
-    const REQUEST_PARAMS_FORMAT_TYPE_ARRAY = 'ARRAY';
+    public const REQUEST_PARAMS_FORMAT_TYPE_ARRAY = 'ARRAY';
 
     /**
      * Request parameter format json
      *
      * @var string
      */
-    const REQUEST_PARAMS_FORMAT_TYPE_JSON = 'JSON';
+    public const REQUEST_PARAMS_FORMAT_TYPE_JSON = 'JSON';
 
     /**
      * Cache group Tag
      */
-    const CACHE_GROUP = 'klarna_api';
+    public const CACHE_GROUP = 'klarna_api';
 
     /**
      * Build the default values for the object
@@ -71,17 +71,17 @@ class Klarna_Core_Model_Api_Rest_Client_Request extends Varien_Object
     protected function _construct()
     {
         $this->setData(
-            array(
-            'response_type'          => self::RESPONSE_TYPE_SINGLE,
-            'method'                 => Klarna_Core_Model_Api_Rest_Client::REQUEST_METHOD_GET,
-            'default_error_message'  => 'Error: unable to find object in api',
-            'url'                    => array(),
-            'id_field'               => null,
-            'ids'                    => array(),
-            'cache_lifetime'         => null,
-            'post_json'              => true,
-            'follow_location_header' => false,
-            )
+            [
+                'response_type'          => self::RESPONSE_TYPE_SINGLE,
+                'method'                 => Klarna_Core_Model_Api_Rest_Client::REQUEST_METHOD_GET,
+                'default_error_message'  => 'Error: unable to find object in api',
+                'url'                    => [],
+                'id_field'               => null,
+                'ids'                    => [],
+                'cache_lifetime'         => null,
+                'post_json'              => true,
+                'follow_location_header' => false,
+            ],
         );
     }
 
@@ -98,7 +98,7 @@ class Klarna_Core_Model_Api_Rest_Client_Request extends Varien_Object
     public function setIds($id)
     {
         if (!is_array($id)) {
-            $id = array($id);
+            $id = [$id];
         }
 
         $this->setData('ids', $id);
@@ -142,7 +142,7 @@ class Klarna_Core_Model_Api_Rest_Client_Request extends Varien_Object
     public function getParams($type = false, $format = null)
     {
         if (is_array($type)) {
-            $data = array();
+            $data = [];
             foreach ($type as $_type) {
                 $_params = $this->getParams($_type, self::REQUEST_PARAMS_FORMAT_TYPE_ARRAY);
                 $data    = array_merge($data, $_params);
@@ -155,7 +155,7 @@ class Klarna_Core_Model_Api_Rest_Client_Request extends Varien_Object
             if (isset($this->_data['params'][$type])) {
                 $data = $this->_data['params'][$type];
             } else {
-                $data = array();
+                $data = [];
             }
         }
 
@@ -172,11 +172,11 @@ class Klarna_Core_Model_Api_Rest_Client_Request extends Varien_Object
             default:
                 if (is_array($data)) {
                     return $data;
-                } elseif (null !== $data) {
-                    return array($data);
-                } else {
-                    return array();
                 }
+                if (null !== $data) {
+                    return [$data];
+                }
+                return [];
         }
     }
 
@@ -194,9 +194,7 @@ class Klarna_Core_Model_Api_Rest_Client_Request extends Varien_Object
             ? $this->getUrl()
             : array_filter(
                 $this->getUrl(),
-                function ($v) {
-                    return !is_numeric($v);
-                }
+                fn($v) => !is_numeric($v),
             );
         $actionName = implode($delimiter, $actionPath);
 
@@ -212,7 +210,7 @@ class Klarna_Core_Model_Api_Rest_Client_Request extends Varien_Object
     {
         $format = $this->getData('default_param_format');
 
-        return null === $format ? ($this->getPostJson()
-            ? self::REQUEST_PARAMS_FORMAT_TYPE_JSON : self::REQUEST_PARAMS_FORMAT_TYPE_ARRAY) : $format;
+        return $format ?? $this->getPostJson()
+            ? self::REQUEST_PARAMS_FORMAT_TYPE_JSON : self::REQUEST_PARAMS_FORMAT_TYPE_ARRAY;
     }
 }

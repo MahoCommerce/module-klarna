@@ -14,7 +14,6 @@
  */
 class Klarna_Payments_Model_Adminhtml_Comment
 {
-
     /**
      * @return string
      */
@@ -32,7 +31,7 @@ class Klarna_Payments_Model_Adminhtml_Comment
             $moduleVersion,
             $platform,
             $platformVersion,
-            $module
+            $module,
         );
 
         $websiteId = null;
@@ -57,7 +56,7 @@ class Klarna_Payments_Model_Adminhtml_Comment
         }
 
         $text = Mage::helper('klarna_payments')->__(
-            'Click here to visit the Klarna Merchant Onboarding Page and request credentials.'
+            'Click here to visit the Klarna Merchant Onboarding Page and request credentials.',
         );
 
         $html = '<a href="' . $url . '" target="_blank">' . $text . '</a>';

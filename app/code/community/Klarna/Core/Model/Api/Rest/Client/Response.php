@@ -14,14 +14,14 @@
  * @method Klarna_Core_Model_Api_Rest_Client_Response setResponseObject($string)
  * @method Klarna_Core_Model_Api_Rest_Client_Response setIsSuccessful(bool $flag)
  * @method bool getIsSuccessful()
- * @method Zend_Http_Response getResponseObject()
+ * @method Klarna_Core_Model_Api_Rest_Client_Httpresponse getResponseObject()
  */
 class Klarna_Core_Model_Api_Rest_Client_Response extends Klarna_Core_Model_Api_Response
 {
     /**
      * Model class name
      */
-    const RESPONSE_TYPE = 'klarna_core/api_rest_client_response';
+    public const RESPONSE_TYPE = 'klarna_core/api_rest_client_response';
 
     /**
      * Get the error message to display for invalid items.
@@ -37,8 +37,6 @@ class Klarna_Core_Model_Api_Rest_Client_Response extends Klarna_Core_Model_Api_R
     /**
      * Set the raw response array from the API call
      *
-     * @param array $response
-     *
      * @return $this
      */
     public function setResponse(array $response)
@@ -53,11 +51,11 @@ class Klarna_Core_Model_Api_Rest_Client_Response extends Klarna_Core_Model_Api_R
         $emptyResponse = (empty($response) && $this->getResponseObject()->getStatus() !== 204);
         if (null !== $idField && ($emptyResponse  || isset($response['error_code']))) {
             $id        = $this->getRequest()->getIds();
-            $_response = array(
+            $_response = [
                 'error'         => true,
                 'error_message' => $this->getDefaultErrorMessage(),
                 'is_successful' => false,
-            );
+            ];
 
             if (null !== $idField) {
                 $_response[$idField] = $id ?: null;
@@ -73,8 +71,6 @@ class Klarna_Core_Model_Api_Rest_Client_Response extends Klarna_Core_Model_Api_R
 
     /**
      * Set the request used to load the data
-     *
-     * @param Klarna_Core_Model_Api_Rest_Client_Request $request
      *
      * @return $this
      */

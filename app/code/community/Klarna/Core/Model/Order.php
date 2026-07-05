@@ -26,7 +26,7 @@ class Klarna_Core_Model_Order extends Mage_Core_Model_Abstract
     /**
      * Init
      */
-    public function _construct()
+    protected function _construct()
     {
         $this->_init('klarna_core/order');
     }
@@ -45,8 +45,6 @@ class Klarna_Core_Model_Order extends Mage_Core_Model_Abstract
 
     /**
      * Load by an order
-     *
-     * @param Mage_Sales_Model_Order $order
      *
      * @return $this
      */

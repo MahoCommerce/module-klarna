@@ -39,7 +39,7 @@ class Klarna_Payments_Block_Form_Payments extends Mage_Payment_Block_Form
      */
     public function hasAuthorizationToken()
     {
-        return (bool)$this->getAuthorizationToken();
+        return (bool) $this->getAuthorizationToken();
     }
 
     /**
@@ -93,7 +93,7 @@ class Klarna_Payments_Block_Form_Payments extends Mage_Payment_Block_Form
      */
     public function getPreScreenEnabled()
     {
-        return (bool)$this->getMethod()->getConfigData('pre_screen');
+        return (bool) $this->getMethod()->getConfigData('pre_screen');
     }
 
     /**
@@ -126,7 +126,7 @@ class Klarna_Payments_Block_Form_Payments extends Mage_Payment_Block_Form
         $mark = Mage::getConfig()->getBlockClassName('klarna_payments/mark');
 
         /** @var Klarna_Payments_Block_Mark $mark */
-        $mark = new $mark;
+        $mark = new $mark();
         $mark->setMethodCode($this->getKlarnaMethodCode());
         $mark->setTitle($payment['name']);
         $mark->setLogo($payment['asset_urls']['descriptive']);
@@ -150,7 +150,7 @@ class Klarna_Payments_Block_Form_Payments extends Mage_Payment_Block_Form
         $payments = $checkoutSession->getData($this->getKlarnaMethodCode() . '_categories_block_form');
 
         $keySearch = str_replace('klarna_payments_', '', $method->getCode());
-        $payment = array();
+        $payment = [];
         foreach ($payments as $key => $value) {
             if ($value['identifier'] == $keySearch) {
                 $payment = $value;
@@ -192,6 +192,6 @@ class Klarna_Payments_Block_Form_Payments extends Mage_Payment_Block_Form
     public function isAutoFinalize()
     {
         $controllerName = Mage::app()->getRequest()->getControllerName();
-        return (bool)($controllerName !== 'onepage');
+        return (bool) ($controllerName !== 'onepage');
     }
 }

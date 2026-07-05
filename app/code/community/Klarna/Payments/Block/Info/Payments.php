@@ -15,6 +15,7 @@ class Klarna_Payments_Block_Info_Payments extends Mage_Payment_Block_Info
     /**
      * Set template
      */
+    #[\Override]
     protected function _construct()
     {
         parent::_construct();
@@ -28,6 +29,7 @@ class Klarna_Payments_Block_Info_Payments extends Mage_Payment_Block_Info
      *
      * @return Varien_Object
      */
+    #[\Override]
     protected function _prepareSpecificInformation($transport = null)
     {
         $transport         = parent::_prepareSpecificInformation($transport);
@@ -46,13 +48,13 @@ class Klarna_Payments_Block_Info_Payments extends Mage_Payment_Block_Info
                     $this->helper('klarna_payments')->__('Payment Method'),
                     $this->helper('klarna_payments')->getKlarnaPaymentNameByType(
                         $info->getAdditionalInformation('klarna_payment_type'),
-                        $order->getQuoteId()
-                    )
+                        $order->getQuoteId(),
+                    ),
                 );
 
                 $transport->setData(
                     $this->helper('klarna_payments')->__('Merchant Portal'),
-                    $this->helper('klarna_payments')->getOrderMerchantPortalLink($order,$klarnaOrder)
+                    $this->helper('klarna_payments')->getOrderMerchantPortalLink($order, $klarnaOrder),
                 );
 
                 if ($klarnaOrder->getReservationId()
@@ -60,7 +62,8 @@ class Klarna_Payments_Block_Info_Payments extends Mage_Payment_Block_Info
                 ) {
                     $transport->setData(
                         $this->helper('klarna_core')
-                        ->__('Reservation'), $klarnaOrder->getReservationId()
+                        ->__('Reservation'),
+                        $klarnaOrder->getReservationId(),
                     );
                 }
             }
@@ -141,6 +144,6 @@ class Klarna_Payments_Block_Info_Payments extends Mage_Payment_Block_Info
      */
     public function isStringUrl($string)
     {
-        return (bool)filter_var($string, FILTER_VALIDATE_URL);
+        return (bool) filter_var($string, FILTER_VALIDATE_URL);
     }
 }

@@ -26,7 +26,7 @@ class Klarna_Payments_Model_Quote extends Mage_Core_Model_Abstract
     /**
      * Init
      */
-    public function _construct()
+    protected function _construct()
     {
         $this->_init('klarna_payments/quote');
     }
@@ -46,9 +46,7 @@ class Klarna_Payments_Model_Quote extends Mage_Core_Model_Abstract
     /**
      * Load active Klarna quote object by quote
      *
-     * @param Mage_Sales_Model_Quote $quote
      * @param string                 $paymentMethod
-     *
      * @return Klarna_Payments_Model_Quote
      */
     public function loadActiveByQuote(Mage_Sales_Model_Quote $quote, $paymentMethod = 'klarna_payments')
@@ -81,7 +79,7 @@ class Klarna_Payments_Model_Quote extends Mage_Core_Model_Abstract
     public function setPaymentMethodCategories($values)
     {
         if (is_null($values)) {
-            $values = array();
+            $values = [];
         }
         $json = json_encode($values);
         $this->setData('payment_method_categories', $json);
@@ -96,9 +94,9 @@ class Klarna_Payments_Model_Quote extends Mage_Core_Model_Abstract
     {
         $result = $this->getData('payment_method_categories');
         if (empty($result)) {
-            return array();
+            return [];
         }
 
-        return json_decode($this->getData('payment_method_categories'), true);
+        return json_decode((string) $this->getData('payment_method_categories'), true);
     }
 }

@@ -20,20 +20,20 @@ class Klarna_Core_Model_System_Config_Source_Version
     public function toOptionArray()
     {
         $helper  = Mage::helper('klarna_core');
-        $options = array();
+        $options = [];
 
         if ($versions = $helper->getApiVersion()) {
             foreach ($versions as $version) {
-                $options[] = array(
+                $options[] = [
                     'label' => Mage::helper('klarna_core')->__($version->getLabel()),
-                    'value' => $version->getCode()
-                );
+                    'value' => $version->getCode(),
+                ];
             }
         } else {
-            $options[] = array(
+            $options[] = [
                 'label' => Mage::helper('klarna_core')->__('No API Versions Available'),
-                'value' => null
-            );
+                'value' => null,
+            ];
         }
 
         return $options;

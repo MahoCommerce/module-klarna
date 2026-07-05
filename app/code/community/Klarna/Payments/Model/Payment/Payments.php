@@ -41,7 +41,7 @@ class Klarna_Payments_Model_Payment_Payments extends Klarna_Core_Model_Payment_M
      *
      * @var array
      */
-    protected $_categoryInformation = array();
+    protected $_categoryInformation = [];
 
     /**
      * The title of the payment for example 'Pay now'
@@ -89,6 +89,7 @@ class Klarna_Payments_Model_Payment_Payments extends Klarna_Core_Model_Payment_M
      *
      * @return bool
      */
+    #[\Override]
     public function isAvailable($quote = null)
     {
         if (null === $quote) {
@@ -119,12 +120,13 @@ class Klarna_Payments_Model_Payment_Payments extends Klarna_Core_Model_Payment_M
             Mage::logException($e);
         }
 
-        return !$isAvailable ? false : parent::isAvailable($quote);
+        return $isAvailable ? parent::isAvailable($quote) : false;
     }
 
     /**
      * @return string
      */
+    #[\Override]
     public function getTitle()
     {
         return $this->_title;
@@ -137,6 +139,7 @@ class Klarna_Payments_Model_Payment_Payments extends Klarna_Core_Model_Payment_M
      *
      * @return $this
      */
+    #[\Override]
     public function assignData($data)
     {
         $info = $this->getInfoInstance();
@@ -156,6 +159,7 @@ class Klarna_Payments_Model_Payment_Payments extends Klarna_Core_Model_Payment_M
      * @return $this
      * @throws Mage_Core_Exception
      */
+    #[\Override]
     public function validate()
     {
         $info  = $this->getInfoInstance();
@@ -178,7 +182,7 @@ class Klarna_Payments_Model_Payment_Payments extends Klarna_Core_Model_Payment_M
             }
 
             if (!$klarnaQuote->getAuthorizationToken()) {
-                Mage::throwException($this->_getHelper()->__("Authorization Token is a required field."));
+                Mage::throwException($this->_getHelper()->__('Authorization Token is a required field.'));
             }
         }
 
@@ -188,16 +192,16 @@ class Klarna_Payments_Model_Payment_Payments extends Klarna_Core_Model_Payment_M
     /**
      * Authorize payment method
      *
-     * @param Varien_Object $payment
      * @param float         $amount
-     *
      * @return $this
      */
+    #[\Override]
     public function authorize(Varien_Object $payment, $amount)
     {
         $klarnaQuote = $this->_getKlarnaQuote($payment->getOrder()->getQuote());
         $result      = $this->getPurchaseApi()->placeOrder(
-            $klarnaQuote->getAuthorizationToken(), $this->getPurchaseApi()->getGeneratedPlaceRequest()
+            $klarnaQuote->getAuthorizationToken(),
+            $this->getPurchaseApi()->getGeneratedPlaceRequest(),
         );
 
         if ($result->getIsSuccessful()) {
@@ -216,11 +220,11 @@ class Klarna_Payments_Model_Payment_Payments extends Klarna_Core_Model_Payment_M
             $klarnaOrder = Mage::getModel('klarna_core/order');
 
             $klarnaOrder->setData(
-                array(
-                'session_id'     => $result->getId(),
-                'reservation_id' => $result->getId(),
-                'order_id'       => $payment->getOrder()->getId()
-                )
+                [
+                    'session_id'     => $result->getId(),
+                    'reservation_id' => $result->getId(),
+                    'order_id'       => $payment->getOrder()->getId(),
+                ],
             );
             $klarnaOrder->save();
 

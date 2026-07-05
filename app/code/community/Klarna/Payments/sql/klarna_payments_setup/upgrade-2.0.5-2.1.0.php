@@ -19,14 +19,14 @@ $table = $installer->getConnection()
                    ->addColumn(
                        $installer->getTable('klarna_payments/quote'),
                        'payment_method',
-                       array(
+                       [
                            'TYPE'     => Varien_Db_Ddl_Table::TYPE_TEXT,
                            'COMMENT'  => 'Payment Method',
                            'LENGTH'   => 255,
                            'DEFAULT'  => 'klarna_payments',
-                           'NULLABLE' => false
-                       )
+                           'NULLABLE' => false,
+                       ],
                    );
-$installer->getConnection()->update($installer->getTable('klarna_payments/quote'), array('payment_method' => 'klarna_payments'));
+$installer->getConnection()->update($installer->getTable('klarna_payments/quote'), ['payment_method' => 'klarna_payments']);
 
 $installer->endSetup();

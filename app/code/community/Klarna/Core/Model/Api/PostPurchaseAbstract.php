@@ -1,12 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2015-2020 Klarna Bank AB (publ)
  * SPDX-FileCopyrightText: 2026 Maho <https://mahocommerce.com>
  * SPDX-License-Identifier: Apache-2.0
  * @package Klarna_Core
  */
-
 /**
  * Klarna api integration abstract
  *
@@ -15,8 +16,7 @@
  * @method Klarna_Core_Model_Api_PostPurchaseAbstract setConfig(Varien_Object $config)
  * @method Varien_Object getConfig()
  */
-class Klarna_Core_Model_Api_PostPurchaseAbstract extends Klarna_Core_Model_Api_ApiTypeAbstract
-    implements Klarna_Core_Model_Api_PostPurchaseApiInterface
+class Klarna_Core_Model_Api_PostPurchaseAbstract extends Klarna_Core_Model_Api_ApiTypeAbstract implements Klarna_Core_Model_Api_PostPurchaseApiInterface
 {
     /**
      * Acknowledge an order in order management

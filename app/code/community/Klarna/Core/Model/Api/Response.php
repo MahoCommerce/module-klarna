@@ -1,12 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2015-2020 Klarna Bank AB (publ)
  * SPDX-FileCopyrightText: 2026 Maho <https://mahocommerce.com>
  * SPDX-License-Identifier: Apache-2.0
  * @package Klarna_Core
  */
-
 /**
  * Response object from a remote request
  *
@@ -23,9 +24,9 @@ class Klarna_Core_Model_Api_Response extends Varien_Object
     protected function _construct()
     {
         $this->setData(
-            array(
-            'is_successful' => false
-            )
+            [
+                'is_successful' => false,
+            ],
         );
     }
 }

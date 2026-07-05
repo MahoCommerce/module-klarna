@@ -28,7 +28,7 @@ class Klarna_Core_Model_System_Config_Source_Customergroup
     {
         if (null === $this->_options) {
             $this->_options = Mage::getResourceModel('customer/group_collection')->toOptionArray();
-            array_unshift($this->_options, array('value' => -1, 'label' => ''));
+            array_unshift($this->_options, ['value' => -1, 'label' => '']);
         }
 
         return $this->_options;

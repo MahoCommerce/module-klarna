@@ -7,8 +7,17 @@
  * @package Klarna_Core
  */
 
+declare(strict_types=1);
+
+use Symfony\Component\HttpClient\HttpClient;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
+
 /**
  * Klarna REST api client
+ *
+ * Uses Symfony HttpClient for transport (Zend_Http_Client was dropped in Maho). The public
+ * request() contract and the klarna_core_rest_* events are preserved for the API layer built on
+ * top of this class (Klarna_Core_Model_Api_Rest_Client_Abstract and its subclasses).
  *
  * @method Klarna_Core_Model_Api_Rest_Client setRequest(Klarna_Core_Model_Api_Rest_Client_Request $request)
  * @method Klarna_Core_Model_Api_Rest_Client_Request getRequest()
@@ -28,60 +37,39 @@
 class Klarna_Core_Model_Api_Rest_Client extends Varien_Object
 {
     /**
-     * Current open client connection
-     *
-     * @var Zend_Http_Client
-     */
-    protected $_client;
-
-    /**
-     * Stores the parameters sent.
-     *
-     * @var array
-     */
-    protected $_parameters = array();
-
-    /**
      * Request method used for get
-     *
-     * @var string
      */
-    const REQUEST_METHOD_GET = Zend_Http_Client::GET;
+    public const REQUEST_METHOD_GET = 'GET';
 
     /**
      * Request method used for post
-     *
-     * @var string
      */
-    const REQUEST_METHOD_POST = Zend_Http_Client::POST;
+    public const REQUEST_METHOD_POST = 'POST';
 
     /**
      * Request method for delete
-     *
-     * @var string
      */
-    const REQUEST_METHOD_DELETE = Zend_Http_Client::DELETE;
+    public const REQUEST_METHOD_DELETE = 'DELETE';
 
     /**
      * Request method used for patch
-     *
-     * @var string
      */
-    const REQUEST_METHOD_PATCH = 'PATCH';
+    public const REQUEST_METHOD_PATCH = 'PATCH';
 
     /**
      * Response type for RAW data
-     *
-     * @var string
      */
-    const RAW_RESPONSE_TYPE = 'raw';
+    public const RAW_RESPONSE_TYPE = 'raw';
 
     /**
      * JSON encoding type string
-     *
-     * @var string
      */
-    const ENC_JSON = 'application/json';
+    public const ENC_JSON = 'application/json';
+
+    /**
+     * Current open client connection
+     */
+    protected ?HttpClientInterface $_client = null;
 
     /**
      * Default request object type
@@ -109,20 +97,11 @@ class Klarna_Core_Model_Api_Rest_Client extends Varien_Object
      *
      * @var array
      */
-    protected $_requestConfig = array(
-        'maxredirects'    => 5,
-        'strictredirects' => false,
-        'useragent'       => 'Magento_Rest_Client',
-        'timeout'         => 30,
-        'adapter'         => 'Zend_Http_Client_Adapter_Socket',
-        'httpversion'     => Zend_Http_Client::HTTP_1,
-        'keepalive'       => true,
-        'storeresponse'   => true,
-        'strict'          => true,
-        'output_stream'   => false,
-        'encodecookies'   => true,
-        'rfc3986_strict'  => false
-    );
+    protected $_requestConfig = [
+        'maxredirects' => 5,
+        'useragent'    => 'Magento_Rest_Client',
+        'timeout'      => 30,
+    ];
 
     /**
      * Init connection client
@@ -131,22 +110,22 @@ class Klarna_Core_Model_Api_Rest_Client extends Varien_Object
      */
     protected function _construct()
     {
-        $version             = Mage::getConfig()->getModuleConfig('Klarna_Core')->version;
+        $version     = Mage::getConfig()->getModuleConfig('Klarna_Core')->version;
         $mageVersion = Mage::getVersion();
         $mageEdition = Mage::getEdition();
 
         $versionStringObject = new Varien_Object(
-            array(
-            'version_string' => "Klarna_Core_v{$version}"
-            )
+            [
+                'version_string' => "Klarna_Core_v{$version}",
+            ],
         );
         Mage::dispatchEvent(
-            'klarna_core_client_user_agent_string', array(
-            'version_string_object' => $versionStringObject
-            )
+            'klarna_core_client_user_agent_string',
+            [
+                'version_string_object' => $versionStringObject,
+            ],
         );
         $this->setRequestConfig('useragent', $versionStringObject->getVersionString() . " (Magento {$mageEdition} {$mageVersion})");
-        $this->_client = $this->getClient();
 
         return $this;
     }
@@ -201,60 +180,37 @@ class Klarna_Core_Model_Api_Rest_Client extends Varien_Object
     public function getDebug()
     {
         if (!$this->hasData('debug')) {
-            $this->setDebug((bool)$this->getConfig()->getDebug());
+            $this->setDebug((bool) $this->getConfig()->getDebug());
         }
 
-        return (bool)$this->getData('debug');
+        return (bool) $this->getData('debug');
     }
 
     /**
-     * Load the connection client
-     *
-     * @param null $url
-     *
-     * @return Zend_Http_Client
+     * Load the connection client, configured with the default headers and basic auth.
      */
-    public function getClient($url = null)
+    public function getClient(): HttpClientInterface
     {
-        if (null === $this->_client) {
-            $client = new Zend_Http_Client(null, $this->getRequestConfig());
+        if ($this->_client === null) {
+            $options = [
+                'headers' => [
+                    'Accept-Encoding' => 'gzip,deflate',
+                    'Accept'          => 'application/json',
+                    'Content-Type'    => 'application/json',
+                ],
+                'timeout'       => (float) $this->getRequestConfig('timeout'),
+                'max_redirects' => (int) $this->getRequestConfig('maxredirects'),
+            ];
 
-            $client->setHeaders(
-                array(
-                'Accept-encoding' => 'gzip,deflate',
-                'accept'          => 'application/json',
-                'content-type'    => 'application/json'
-                )
-            );
+            if ($this->getRequestConfig('useragent')) {
+                $options['headers']['User-Agent'] = $this->getRequestConfig('useragent');
+            }
 
             if ($this->getAuthUsername()) {
-                $client->setAuth($this->getAuthUsername(), $this->getAuthPassword());
+                $options['auth_basic'] = [$this->getAuthUsername(), (string) $this->getAuthPassword()];
             }
 
-            $this->_client = $client;
-        }
-
-        if (null !== $url) {
-            try {
-                if (!is_string($url) || null === parse_url($url, PHP_URL_SCHEME)) {
-                    if (!is_array($url)) {
-                        $url = array($url);
-                    }
-
-                    $urlBase = $this->getBaseUrl();
-                    $urlBase = rtrim($urlBase, '/');
-
-                    array_unshift($url, $urlBase);
-
-                    $url = implode('/', $url);
-                }
-
-                $url = preg_replace('/\s+/', '', $url);
-
-                $this->_client->setUri($url);
-            } catch (Zend_Uri_Exception $e) {
-                $this->_debug($e, Zend_Log::CRIT);
-            }
+            $this->_client = HttpClient::create($options);
         }
 
         return $this->_client;
@@ -273,45 +229,40 @@ class Klarna_Core_Model_Api_Rest_Client extends Varien_Object
     }
 
     /**
-     * Covert response into response object
+     * Convert response into response object
      *
      * @throws Klarna_Core_Model_Api_Exception
      * @return mixed
      */
     protected function _getResponse()
     {
-        if (null === $this->_response) {
-            $responseArray = array();
+        if ($this->_response === null) {
+            $responseArray = [];
 
-            /** @var Zend_Http_Response $response */
-            try {
-                $response = $this->getLastResponse();
-            } catch (Zend_Http_Client_Exception $e) {
-                $this->_debug($e, Zend_Log::CRIT);
-            }
+            $response = $this->getLastResponse();
 
             if (self::RAW_RESPONSE_TYPE === $this->getResponseType()) {
-                if ($response instanceof Zend_Http_Response) {
-                    $response = $response->getBody();
-                }
-
-                $this->_response = $response;
+                $this->_response = ($response instanceof Klarna_Core_Model_Api_Rest_Client_Httpresponse)
+                    ? $response->getBody()
+                    : $response;
 
                 return $this->_response;
-            } elseif ($response !== false) {
+            }
+
+            if ($response instanceof Klarna_Core_Model_Api_Rest_Client_Httpresponse) {
                 try {
                     $_responseArray = Mage::helper('core')->jsonDecode($response->getBody());
                     if ($_responseArray) {
                         $responseArray = $_responseArray;
                     }
-                } catch (Exception $e) {
+                } catch (Exception) {
                 }
             }
 
             $this->_response = $this->_getResponseObject()
                 ->setRequest($this->getData('request'))
                 ->setResponseObject($response)
-                ->setIsSuccessful($response->isSuccessful())
+                ->setIsSuccessful($response instanceof Klarna_Core_Model_Api_Rest_Client_Httpresponse && $response->isSuccessful())
                 ->setResponse($responseArray);
         }
 
@@ -321,12 +272,12 @@ class Klarna_Core_Model_Api_Rest_Client extends Varien_Object
     /**
      * Get the response type object
      *
-     * @return Klarna_Core_Model_Api_Rest_Client_Response|Varien_Object
      * @throws Klarna_Core_Model_Api_Exception
+     * @return Klarna_Core_Model_Api_Rest_Client_Response|Varien_Object
      */
     protected function _getResponseObject()
     {
-        if (null === $this->_responseObject) {
+        if ($this->_responseObject === null) {
             if (self::RAW_RESPONSE_TYPE == $this->getResponseType()) {
                 throw new Klarna_Core_Model_Api_Exception('No response object available for raw response type.');
             }
@@ -347,15 +298,13 @@ class Klarna_Core_Model_Api_Rest_Client extends Varien_Object
      * Do a request by method
      *
      * @param string $method
-     * @param string $url
+     * @param array|string $url
      *
      * @return mixed
      */
     protected function _requestByMethod($method, $url)
     {
-        $this->getClient($url);
-
-        $this->_methodRequest($method);
+        $this->_methodRequest($method, $url);
 
         $this->_response = null;
 
@@ -364,7 +313,7 @@ class Klarna_Core_Model_Api_Rest_Client extends Varien_Object
 
         Mage::dispatchEvent("klarna_core_rest_{$request->getFullActionName()}_{$method}_after", $this->_getEventData());
         Mage::dispatchEvent("klarna_core_rest_request_{$method}_after", $this->_getEventData());
-        Mage::dispatchEvent("klarna_core_rest_request_after", $this->_getEventData());
+        Mage::dispatchEvent('klarna_core_rest_request_after', $this->_getEventData());
 
         return $response;
     }
@@ -373,124 +322,143 @@ class Klarna_Core_Model_Api_Rest_Client extends Varien_Object
      * Perform the request
      *
      * @param string $method
+     * @param array|string $url
      *
-     * @throws Exception
-     * @return Zend_Http_Response
+     * @return Klarna_Core_Model_Api_Rest_Client_Httpresponse
      */
-    protected function _methodRequest($method = self::REQUEST_METHOD_GET)
+    protected function _methodRequest($method, $url)
     {
         /** @var Klarna_Core_Model_Api_Rest_Client_Request $request */
-        $request = $this->getRequest();
-        $client  = $this->getClient();
+        $request  = $this->getRequest();
+        $fullUrl  = $this->_resolveUrl($url);
+        $options  = $this->_buildRequestOptions($request, $method);
 
-        // Set GET params
-        $paramsGet = $request->getParams(
-            self::REQUEST_METHOD_GET,
-            Klarna_Core_Model_Api_Rest_Client_Request::REQUEST_PARAMS_FORMAT_TYPE_ARRAY
-        );
-        if (!empty($paramsGet)) {
-            $client->setParameterGet($paramsGet);
-        }
+        $this->setData('last_raw_request', "{$method} {$fullUrl}\n" . ($options['body'] ?? ($options['json'] ?? '')));
 
-        // Set POST & PATCH params
-        $paramsPost = $request->getParams(
-            array(
-            self::REQUEST_METHOD_POST,
-            self::REQUEST_METHOD_PATCH
-            )
-        );
-        if (!empty($paramsPost)) {
-            if ($request->getPostJson()) {
-                $client->setRawData($paramsPost, self::ENC_JSON);
-            } else {
-                $client->setParameterPost($paramsPost);
-            }
-        }
-
-        // Set METHOD Type params (global params)
-        $paramsGlobal = $request->getParams(
-            false,
-            Klarna_Core_Model_Api_Rest_Client_Request::REQUEST_PARAMS_FORMAT_TYPE_ARRAY
-        );
-        if (!empty($paramsGlobal)) {
-            switch ($method) {
-                case self::REQUEST_METHOD_POST:
-                    if ($request->getPostJson()) {
-                        $client->setRawData($paramsGlobal, self::ENC_JSON);
-                    } else {
-                        $client->setParameterPost($paramsGlobal);
-                    }
-                    break;
-                case self::REQUEST_METHOD_GET:
-                default:
-                    $client->setParameterGet($paramsGlobal);
-            }
-        }
-
-        // Do the request
         try {
             Mage::dispatchEvent("klarna_core_rest_{$request->getFullActionName()}_{$method}_before", $this->_getEventData());
             Mage::dispatchEvent("klarna_core_rest_request_{$method}_before", $this->_getEventData());
-            Mage::dispatchEvent("klarna_core_rest_request_before", $this->_getEventData());
+            Mage::dispatchEvent('klarna_core_rest_request_before', $this->_getEventData());
 
-            $response = $client->request($method);
+            $response = $this->_execute($method, $fullUrl, $options);
 
-            if ($this->getRequest()->getFollowLocationHeader() && $response->isSuccessful()
+            if ($request->getFollowLocationHeader()
+                && $response->isSuccessful()
                 && ($location = $response->getHeader('Location'))
             ) {
-                $this->_debug($client->getLastResponse(), Zend_Log::DEBUG);
-                $this->_debug('Following Location header', Zend_Log::DEBUG);
-
-                $client   = $this->getClient($location);
-                $response = $client->request(self::REQUEST_METHOD_GET);
+                $this->_debug('Following Location header', Mage::LOG_DEBUG);
+                $response = $this->_execute(self::REQUEST_METHOD_GET, $this->_resolveUrl($location), []);
             }
         } catch (Exception $e) {
-            $this->_debug($e, Zend_Log::CRIT);
+            $this->_debug($e, Mage::LOG_CRIT);
             $code = $e->getCode();
 
-            if (5 !== floor($code / 100)) {
+            if (5 !== (int) floor((int) $code / 100)) {
                 $code = 500;
             }
 
-            $response = new Zend_Http_Response($code, array(), $e->getMessage(), '1.1', $e->getMessage());
+            $response = new Klarna_Core_Model_Api_Rest_Client_Httpresponse((int) $code, [], $e->getMessage());
         }
 
-        $this->_debug($client->getLastRequest(), Zend_Log::DEBUG);
-        $this->_debug($client->getLastResponse(), Zend_Log::DEBUG);
+        $this->_debug($response, Mage::LOG_DEBUG);
 
         $this->setData('last_response', $response);
-
-        $timeout = $request->getRequestTimeout();
-        if (null !== $timeout) {
-            $oldTimeout = $this->getData('_temp_timeout', $this->getRequestConfig('timeout'));
-            $this->setRequestConfig('timeout', $oldTimeout);
-            $this->getClient()->setConfig($this->getRequestConfig());
-        }
 
         return $response;
     }
 
     /**
-     * Perform a request
+     * Issue a single HTTP request and normalise the result into a response value object.
      *
-     * @param Klarna_Core_Model_Api_Rest_Client_Request $request
+     * @param array<string, mixed> $options
+     */
+    protected function _execute(string $method, string $url, array $options): Klarna_Core_Model_Api_Rest_Client_Httpresponse
+    {
+        $sfResponse = $this->getClient()->request($method, $url, $options);
+
+        // Passing false to getContent()/getHeaders() prevents Symfony from throwing on 4xx/5xx —
+        // the Klarna API layer inspects status codes and error payloads itself.
+        return new Klarna_Core_Model_Api_Rest_Client_Httpresponse(
+            $sfResponse->getStatusCode(),
+            $sfResponse->getHeaders(false),
+            $sfResponse->getContent(false),
+        );
+    }
+
+    /**
+     * Build the Symfony HttpClient per-request options from the request object.
+     *
+     * @return array<string, mixed>
+     */
+    protected function _buildRequestOptions(Klarna_Core_Model_Api_Rest_Client_Request $request, string $method): array
+    {
+        $options = [];
+
+        $getParams    = $request->getParams(self::REQUEST_METHOD_GET, Klarna_Core_Model_Api_Rest_Client_Request::REQUEST_PARAMS_FORMAT_TYPE_ARRAY);
+        $bodyParams   = $request->getParams([self::REQUEST_METHOD_POST, self::REQUEST_METHOD_PATCH], Klarna_Core_Model_Api_Rest_Client_Request::REQUEST_PARAMS_FORMAT_TYPE_ARRAY);
+        $globalParams = $request->getParams(false, Klarna_Core_Model_Api_Rest_Client_Request::REQUEST_PARAMS_FORMAT_TYPE_ARRAY);
+
+        if ($method === self::REQUEST_METHOD_GET) {
+            $query = array_merge($getParams, $globalParams);
+            if (!empty($query)) {
+                $options['query'] = $query;
+            }
+        } else {
+            if (!empty($getParams)) {
+                $options['query'] = $getParams;
+            }
+
+            $payload = array_merge($bodyParams, $globalParams);
+            if (!empty($payload)) {
+                if ($request->getPostJson()) {
+                    $options['json'] = $payload;
+                } else {
+                    $options['body'] = $payload;
+                }
+            }
+        }
+
+        $timeout = $request->getRequestTimeout();
+        if ($timeout !== null) {
+            $options['timeout'] = (float) $timeout;
+        }
+
+        return $options;
+    }
+
+    /**
+     * Resolve a request URL. Accepts an absolute URL string or an array of path segments to be
+     * appended to the configured base URL.
+     *
+     * @param array|string $url
+     */
+    protected function _resolveUrl($url): string
+    {
+        if (is_string($url) && parse_url($url, PHP_URL_SCHEME) !== null) {
+            return (string) preg_replace('/\s+/', '', $url);
+        }
+
+        if (!is_array($url)) {
+            $url = [$url];
+        }
+
+        array_unshift($url, rtrim((string) $this->getBaseUrl(), '/'));
+
+        return (string) preg_replace('/\s+/', '', implode('/', $url));
+    }
+
+    /**
+     * Perform a request
      *
      * @throws Klarna_Core_Model_Api_Exception
      * @return Klarna_Core_Model_Api_Rest_Client_Response|string
      */
     public function request(Klarna_Core_Model_Api_Rest_Client_Request $request)
     {
-        $timeout = $request->getRequestTimeout();
-        if (null !== $timeout) {
-            $this->setData('_temp_timeout', $this->getRequestConfig('timeout'));
-            $this->setRequestConfig('timeout', $timeout);
-            $this->getClient()->setConfig($this->getRequestConfig());
-        }
-
         $this->setData('request', $request);
         $this->setData('response_type', $request->getData('response_type'));
 
-        $method = strtoupper(trim($request->getMethod()));
+        $method = strtoupper(trim((string) $request->getMethod()));
 
         $this->setMethod($method);
 
@@ -509,26 +477,18 @@ class Klarna_Core_Model_Api_Rest_Client extends Varien_Object
 
     /**
      * The request configuration used for the request.
-     * If a field type is provided then the raw data will be returned. Otherwise, the data will be formatted to be used
-     * for the HTTP request.
-     *
-     * @see self::_getRequestConfig()
      *
      * @param string $name
      *
-     * @return array
+     * @return array|mixed|null
      */
     public function getRequestConfig($name = null)
     {
-        if (null === $name) {
+        if ($name === null) {
             return $this->_getRequestConfig();
-        } else {
-            if (isset($this->_requestConfig[$name])) {
-                return $this->_requestConfig[$name];
-            }
         }
 
-        return null;
+        return $this->_requestConfig[$name] ?? null;
     }
 
     /**
@@ -538,9 +498,8 @@ class Klarna_Core_Model_Api_Rest_Client extends Varien_Object
      */
     protected function _getRequestConfig()
     {
-        $_requestConfigCurrent = $this->_requestConfig;
-        $_requestConfigNew     = array();
-        foreach ($_requestConfigCurrent as $name => $value) {
+        $_requestConfigNew = [];
+        foreach ($this->_requestConfig as $name => $value) {
             if (!empty($value)) {
                 if (is_array($value)) {
                     $value = implode(',', $value);
@@ -577,36 +536,28 @@ class Klarna_Core_Model_Api_Rest_Client extends Varien_Object
     /**
      * Get the last response from the API
      *
-     * @return mixed|Zend_Http_Response
+     * @return Klarna_Core_Model_Api_Rest_Client_Httpresponse|false
      */
     public function getLastResponse()
     {
         $lastResponse = $this->getData('last_response');
 
-        if ($lastResponse instanceof Zend_Http_Response) {
+        if ($lastResponse instanceof Klarna_Core_Model_Api_Rest_Client_Httpresponse) {
             return $lastResponse;
         }
 
-        if (!empty($lastResponse)) {
-            return Zend_Http_Response::fromString($lastResponse);
-        }
-
-        if (null === $lastResponse) {
-            return false;
-        }
-
-        return $lastResponse;
+        return false;
     }
 
     /**
      * Log debug messages
      *
-     * @param $message
-     * @param $level
+     * @param mixed $message
+     * @param mixed $level
      */
     protected function _debug($message, $level)
     {
-        if (Zend_Log::DEBUG != $level || $this->getDebug()) {
+        if (Mage::LOG_DEBUG != $level || $this->getDebug()) {
             Mage::log($this->_rawDebugMessage($message), $level, $this->getLogFileName(), true);
         }
     }
@@ -614,26 +565,19 @@ class Klarna_Core_Model_Api_Rest_Client extends Varien_Object
     /**
      * Raw debug message for logging
      *
-     * @param $message
+     * @param mixed $message
      *
      * @return string
      */
     protected function _rawDebugMessage($message)
     {
-        if ($message instanceof Zend_Http_Client) {
-            $client  = $message;
-            $message = $client->getLastRequest();
-
-            if ($response = $client->getLastResponse()) {
-                $message .= "\n\n" . $response->asString();
-            }
-        } elseif ($message instanceof Zend_Http_Response) {
-            $message = $message->getHeadersAsString(true, "\n") . "\n" . $message->getBody();
+        if ($message instanceof Klarna_Core_Model_Api_Rest_Client_Httpresponse) {
+            $message = $message->asString();
         } elseif ($message instanceof Exception) {
             $message = $message->__toString();
         }
 
-        return $message;
+        return (string) $message;
     }
 
     /**
@@ -643,20 +587,19 @@ class Klarna_Core_Model_Api_Rest_Client extends Varien_Object
      */
     protected function _getEventData()
     {
-        $request = $this->getRequest();
-        $client  = $this->getClient();
+        $eventData = [
+            'request'     => $this->getRequest(),
+            'raw_request' => $this->getData('last_raw_request'),
+        ];
 
-        $eventData = array(
-            'request'     => $request,
-            'raw_request' => $client->getLastRequest(),
-        );
-
-        if ($this->getLastResponse()) {
+        $lastResponse = $this->getLastResponse();
+        if ($lastResponse instanceof Klarna_Core_Model_Api_Rest_Client_Httpresponse) {
             $eventData = array_merge(
-                $eventData, array(
-                'response'     => $this->_getResponse(),
-                'raw_response' => $client->getLastResponse()
-                )
+                $eventData,
+                [
+                    'response'     => $this->_getResponse(),
+                    'raw_response' => $lastResponse->asString(),
+                ],
             );
         }
 

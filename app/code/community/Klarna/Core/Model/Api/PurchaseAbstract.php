@@ -15,8 +15,7 @@
  * @method Klarna_Core_Model_Api_PurchaseAbstract setConfig(Varien_Object $config)
  * @method Varien_Object getConfig()
  */
-class Klarna_Core_Model_Api_PurchaseAbstract extends Klarna_Core_Model_Api_ApiTypeAbstract
-    implements Klarna_Core_Model_Api_PurchaseApiInterface
+class Klarna_Core_Model_Api_PurchaseAbstract extends Klarna_Core_Model_Api_ApiTypeAbstract implements Klarna_Core_Model_Api_PurchaseApiInterface
 {
     /**
      * Create or update a session

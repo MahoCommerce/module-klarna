@@ -1,15 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2015-2020 Klarna Bank AB (publ)
  * SPDX-FileCopyrightText: 2026 Maho <https://mahocommerce.com>
  * SPDX-License-Identifier: Apache-2.0
  * @package Klarna_Core
  */
-
 /**
  * Klarna API exception
  */
-class Klarna_Core_Model_Api_Exception extends Exception
-{
-}
+class Klarna_Core_Model_Api_Exception extends Exception {}

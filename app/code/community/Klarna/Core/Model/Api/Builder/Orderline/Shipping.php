@@ -12,7 +12,7 @@
  */
 class Klarna_Core_Model_Api_Builder_Orderline_Shipping extends Klarna_Core_Model_Api_Builder_Orderline_Abstract
 {
-    const ITEM_TYPE_SHIPPING = 'shipping_fee';
+    public const ITEM_TYPE_SHIPPING = 'shipping_fee';
 
     /**
      * Collect totals process.
@@ -21,6 +21,7 @@ class Klarna_Core_Model_Api_Builder_Orderline_Shipping extends Klarna_Core_Model
      *
      * @return $this
      */
+    #[\Override]
     public function collect($checkout)
     {
         $object = $checkout->getObject();
@@ -45,15 +46,15 @@ class Klarna_Core_Model_Api_Builder_Orderline_Shipping extends Klarna_Core_Model
                 }
 
                 $checkout->addData(
-                    array(
-                    'shipping_unit_price'   => $helper->toApiFloat($unitPrice),
-                    'shipping_tax_rate'     => $helper->toApiFloat($taxRate),
-                    'shipping_total_amount' => $helper->toApiFloat($unitPrice),
-                    'shipping_tax_amount'   => $helper->toApiFloat($taxAmount),
-                    'shipping_title'        => $total->getTitle(),
-                    'shipping_reference'    => $total->getCode()
+                    [
+                        'shipping_unit_price'   => $helper->toApiFloat($unitPrice),
+                        'shipping_tax_rate'     => $helper->toApiFloat($taxRate),
+                        'shipping_total_amount' => $helper->toApiFloat($unitPrice),
+                        'shipping_tax_amount'   => $helper->toApiFloat($taxAmount),
+                        'shipping_title'        => $total->getTitle(),
+                        'shipping_reference'    => $total->getCode(),
 
-                    )
+                    ],
                 );
             }
         }
@@ -64,15 +65,15 @@ class Klarna_Core_Model_Api_Builder_Orderline_Shipping extends Klarna_Core_Model
             $taxAmount = $object->getShippingTaxAmount() + $object->getShippingHiddenTaxAmount();
 
             $checkout->addData(
-                array(
-                'shipping_unit_price'   => $helper->toApiFloat($unitPrice),
-                'shipping_tax_rate'     => $helper->toApiFloat($taxRate),
-                'shipping_total_amount' => $helper->toApiFloat($unitPrice),
-                'shipping_tax_amount'   => $helper->toApiFloat($taxAmount),
-                'shipping_title'        => 'Shipping',
-                'shipping_reference'    => 'shipping'
+                [
+                    'shipping_unit_price'   => $helper->toApiFloat($unitPrice),
+                    'shipping_tax_rate'     => $helper->toApiFloat($taxRate),
+                    'shipping_total_amount' => $helper->toApiFloat($unitPrice),
+                    'shipping_tax_amount'   => $helper->toApiFloat($taxAmount),
+                    'shipping_title'        => 'Shipping',
+                    'shipping_reference'    => 'shipping',
 
-                )
+                ],
             );
         }
 
@@ -86,20 +87,21 @@ class Klarna_Core_Model_Api_Builder_Orderline_Shipping extends Klarna_Core_Model
      *
      * @return $this
      */
+    #[\Override]
     public function fetch($checkout)
     {
         if ($checkout->getShippingTotalAmount()) {
             $checkout->addOrderLine(
-                array(
-                'type'             => self::ITEM_TYPE_SHIPPING,
-                'reference'        => $checkout->getShippingReference(),
-                'name'             => $checkout->getShippingTitle(),
-                'quantity'         => 1,
-                'unit_price'       => $checkout->getShippingUnitPrice(),
-                'tax_rate'         => $checkout->getShippingTaxRate(),
-                'total_amount'     => $checkout->getShippingTotalAmount(),
-                'total_tax_amount' => $checkout->getShippingTaxAmount(),
-                )
+                [
+                    'type'             => self::ITEM_TYPE_SHIPPING,
+                    'reference'        => $checkout->getShippingReference(),
+                    'name'             => $checkout->getShippingTitle(),
+                    'quantity'         => 1,
+                    'unit_price'       => $checkout->getShippingUnitPrice(),
+                    'tax_rate'         => $checkout->getShippingTaxRate(),
+                    'total_amount'     => $checkout->getShippingTotalAmount(),
+                    'total_tax_amount' => $checkout->getShippingTaxAmount(),
+                ],
             );
         }
 

@@ -120,7 +120,7 @@ abstract class Klarna_Core_Model_Api_Builder_Orderline_Abstract
     {
         if ($this->_object === null) {
             Mage::throwException(
-                Mage::helper('klarna_core')->__('Object model is not defined.')
+                Mage::helper('klarna_core')->__('Object model is not defined.'),
             );
         }
 
@@ -158,9 +158,9 @@ abstract class Klarna_Core_Model_Api_Builder_Orderline_Abstract
         $discountTaxRate = false;
 
         if ($checkout->getItems()) {
-            $itemTaxRates = array();
-            $totalsIncludingTax = array();
-            $totalsExcludingTax = array();
+            $itemTaxRates = [];
+            $totalsIncludingTax = [];
+            $totalsExcludingTax = [];
             foreach ($checkout->getItems() as $item) {
                 $totalsIncludingTax[] = $item['total_amount'];
                 $totalsExcludingTax[] = $item['total_amount'] - $item['total_tax_amount'];

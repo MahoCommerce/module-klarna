@@ -19,6 +19,7 @@ class Klarna_Core_Model_Api_Builder_Orderline_Customerbalance extends Klarna_Cor
      *
      * @return $this
      */
+    #[\Override]
     public function collect($checkout)
     {
         /** @var Mage_Sales_Model_Quote $quote */
@@ -31,15 +32,15 @@ class Klarna_Core_Model_Api_Builder_Orderline_Customerbalance extends Klarna_Cor
             $value  = $helper->toApiFloat($total->getValue());
 
             $checkout->addData(
-                array(
-                'customerbalance_unit_price'   => $value,
-                'customerbalance_tax_rate'     => 0,
-                'customerbalance_total_amount' => $value,
-                'customerbalance_tax_amount'   => 0,
-                'customerbalance_title'        => $total->getTitle(),
-                'customerbalance_reference'    => $total->getCode()
+                [
+                    'customerbalance_unit_price'   => $value,
+                    'customerbalance_tax_rate'     => 0,
+                    'customerbalance_total_amount' => $value,
+                    'customerbalance_tax_amount'   => 0,
+                    'customerbalance_title'        => $total->getTitle(),
+                    'customerbalance_reference'    => $total->getCode(),
 
-                )
+                ],
             );
         }
 
@@ -53,20 +54,21 @@ class Klarna_Core_Model_Api_Builder_Orderline_Customerbalance extends Klarna_Cor
      *
      * @return $this
      */
+    #[\Override]
     public function fetch($checkout)
     {
         if ($checkout->getCustomerbalanceTotalAmount()) {
             $checkout->addOrderLine(
-                array(
-                'type'             => Klarna_Core_Model_Api_Builder_Orderline_Discount::ITEM_TYPE_DISCOUNT,
-                'reference'        => $checkout->getCustomerbalanceReference(),
-                'name'             => $checkout->getCustomerbalanceTitle(),
-                'quantity'         => 1,
-                'unit_price'       => $checkout->getCustomerbalanceUnitPrice(),
-                'tax_rate'         => $checkout->getCustomerbalanceTaxRate(),
-                'total_amount'     => $checkout->getCustomerbalanceTotalAmount(),
-                'total_tax_amount' => $checkout->getCustomerbalanceTaxAmount(),
-                )
+                [
+                    'type'             => Klarna_Core_Model_Api_Builder_Orderline_Discount::ITEM_TYPE_DISCOUNT,
+                    'reference'        => $checkout->getCustomerbalanceReference(),
+                    'name'             => $checkout->getCustomerbalanceTitle(),
+                    'quantity'         => 1,
+                    'unit_price'       => $checkout->getCustomerbalanceUnitPrice(),
+                    'tax_rate'         => $checkout->getCustomerbalanceTaxRate(),
+                    'total_amount'     => $checkout->getCustomerbalanceTotalAmount(),
+                    'total_tax_amount' => $checkout->getCustomerbalanceTaxAmount(),
+                ],
             );
         }
 

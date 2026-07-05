@@ -24,7 +24,7 @@ class Klarna_Payments_Model_Payment_Attachment_Collector
      *
      * @var array
      */
-    protected $_collectors = array();
+    protected $_collectors = [];
 
     /**
      * Init corresponding models
@@ -95,7 +95,7 @@ class Klarna_Payments_Model_Payment_Attachment_Collector
         if (!$model instanceof Klarna_Payments_Model_Payment_Attachment_Abstract) {
             Mage::throwException(
                 Mage::helper('klarna_payments')
-                    ->__('The order item model should be extended from Klarna_Payments_Model_Payment_Attachment_Abstract.')
+                    ->__('The order item model should be extended from Klarna_Payments_Model_Payment_Attachment_Abstract.'),
             );
         }
         $model->setCode($totalCode);

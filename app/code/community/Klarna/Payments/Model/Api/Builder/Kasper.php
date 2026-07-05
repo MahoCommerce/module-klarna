@@ -30,18 +30,19 @@ class Klarna_Payments_Model_Api_Builder_Kasper extends Klarna_Core_Model_Api_Bui
     /**
      * @var array
      */
-    protected $_attachmentData = array();
+    protected $_attachmentData = [];
 
     /**
      * Generate types
      */
-    const GENERATE_TYPE_PLACE         = 'place';
-    const GENERATE_TYPE_CLIENT_UPDATE = 'client_update';
+    public const GENERATE_TYPE_PLACE         = 'place';
+    public const GENERATE_TYPE_CLIENT_UPDATE = 'client_update';
 
     /**
      * Init
      */
-    public function _construct()
+    #[\Override]
+    protected function _construct()
     {
         Klarna_Core_Model_Api_Builder_Abstract::_construct();
         $this->_paymentsHelper = Mage::helper('klarna_payments');
@@ -55,19 +56,15 @@ class Klarna_Payments_Model_Api_Builder_Kasper extends Klarna_Core_Model_Api_Bui
      *
      * @return array
      */
-    public function _generateRequest($type = self::GENERATE_TYPE_CREATE)
+    #[\Override]
+    protected function _generateRequest($type = self::GENERATE_TYPE_CREATE)
     {
-        switch ($type) {
-            case self::GENERATE_TYPE_CREATE:
-            case self::GENERATE_TYPE_UPDATE:
-                return $this->_generateCreateUpdate();
-            case self::GENERATE_TYPE_PLACE:
-                return $this->_generatePlace();
-            case self::GENERATE_TYPE_CLIENT_UPDATE:
-                return $this->_generateClientUpdate();
-        }
-
-        return array();
+        return match ($type) {
+            self::GENERATE_TYPE_CREATE, self::GENERATE_TYPE_UPDATE => $this->_generateCreateUpdate(),
+            self::GENERATE_TYPE_PLACE => $this->_generatePlace(),
+            self::GENERATE_TYPE_CLIENT_UPDATE => $this->_generateClientUpdate(),
+            default => [],
+        };
     }
 
     /**
@@ -78,14 +75,14 @@ class Klarna_Payments_Model_Api_Builder_Kasper extends Klarna_Core_Model_Api_Bui
      */
     protected function _generateCreateUpdate()
     {
-        $requiredAttributes = array(
-            'purchase_country', 'purchase_currency', 'locale', 'order_amount', 'order_lines'
-        );
+        $requiredAttributes = [
+            'purchase_country', 'purchase_currency', 'locale', 'order_amount', 'order_lines',
+        ];
 
         /** @var Mage_Sales_Model_Quote $quote */
         $quote  = $this->getObject();
         $store  = $quote->getStore();
-        $create = array();
+        $create = [];
 
         /** @var Mage_Sales_Model_Quote_Address $billingAddress */
         $billingAddress = $quote->getBillingAddress();
@@ -120,30 +117,31 @@ class Klarna_Payments_Model_Api_Builder_Kasper extends Klarna_Core_Model_Api_Bui
         /**
          * Urls
          */
-        $urlParams = array(
+        $urlParams = [
             '_nosid'         => true,
-            '_forced_secure' => true
-        );
+            '_forced_secure' => true,
+        ];
 
-        $create['merchant_urls'] = array(
+        $create['merchant_urls'] = [
             'confirmation' => Mage::getUrl('checkout/onepage/success', $urlParams),
-            'notification' => Mage::getUrl('klarna/notification', $urlParams)
-        );
+            'notification' => Mage::getUrl('klarna/notification', $urlParams),
+        ];
 
         /**
          * Merchant reference
          */
         $merchantReferences = new Varien_Object(
-            array(
-            'merchant_reference1' => $quote->getReservedOrderId()
-            )
+            [
+                'merchant_reference1' => $quote->getReservedOrderId(),
+            ],
         );
 
         Mage::dispatchEvent(
-            'klarna_payments_merchant_reference_update', array(
-            'quote'                     => $quote,
-            'merchant_reference_object' => $merchantReferences
-            )
+            'klarna_payments_merchant_reference_update',
+            [
+                'quote'                     => $quote,
+                'merchant_reference_object' => $merchantReferences,
+            ],
         );
 
         if ($merchantReferences->getData('merchant_reference1')) {
@@ -157,10 +155,10 @@ class Klarna_Payments_Model_Api_Builder_Kasper extends Klarna_Core_Model_Api_Bui
         /**
          * Options
          */
-        $create['options'] = array_map('trim', array_filter($this->_checkoutHelper->getCheckoutDesignConfig($store)));
+        $create['options'] = array_map(trim(...), array_filter($this->_checkoutHelper->getCheckoutDesignConfig($store)));
 
         // @todo attachments
-        
+
         $create = array_filter($create);
 
         $address = $quote->isVirtual() ? $quote->getBillingAddress()
@@ -168,7 +166,7 @@ class Klarna_Payments_Model_Api_Builder_Kasper extends Klarna_Core_Model_Api_Bui
         $create['order_amount']      = $this->_helper->toApiFloat($address->getBaseGrandTotal());
         $create['order_tax_amount']  = $this->_helper->toApiFloat($address->getBaseTaxAmount());
 
-        $missingAttributes = array();
+        $missingAttributes = [];
         foreach ($requiredAttributes as $requiredAttribute) {
             if (!isset($create[$requiredAttribute])) { // don't use empty since 0 is equivelant to false
                 $missingAttributes[] = $requiredAttribute;
@@ -195,9 +193,10 @@ class Klarna_Payments_Model_Api_Builder_Kasper extends Klarna_Core_Model_Api_Bui
         $requestDataObj = new Varien_Object();
         $requestDataObj->setRequestBody($create);
         Mage::dispatchEvent(
-            'klarna_payments_request_create_after', array(
-                'request_object' => $requestDataObj
-            )
+            'klarna_payments_request_create_after',
+            [
+                'request_object' => $requestDataObj,
+            ],
         );
 
         $create = $requestDataObj->getRequestBody();
@@ -227,14 +226,14 @@ class Klarna_Payments_Model_Api_Builder_Kasper extends Klarna_Core_Model_Api_Bui
      */
     protected function _generatePlace()
     {
-        $requiredAttributes = array(
+        $requiredAttributes = [
             'purchase_country', 'purchase_currency', 'locale', 'order_amount', 'order_lines', 'merchant_urls',
-            'billing_address', 'shipping_address'
-        );
+            'billing_address', 'shipping_address',
+        ];
 
         /** @var Mage_Sales_Model_Quote $quote */
         $quote  = $this->getObject();
-        $create = array();
+        $create = [];
 
         $create['locale']            = str_replace('_', '-', Mage::app()->getLocale()->getLocaleCode());
         $create['purchase_country']  = $this->getDefaultCountry();
@@ -256,30 +255,31 @@ class Klarna_Payments_Model_Api_Builder_Kasper extends Klarna_Core_Model_Api_Bui
         /**
          * Urls
          */
-        $urlParams = array(
+        $urlParams = [
             '_nosid'         => true,
-            '_forced_secure' => true
-        );
+            '_forced_secure' => true,
+        ];
 
-        $create['merchant_urls'] = array(
+        $create['merchant_urls'] = [
             'confirmation' => Mage::getUrl('checkout/onepage/success', $urlParams),
-            'notification' => Mage::getUrl('klarna/notification', $urlParams)
-        );
+            'notification' => Mage::getUrl('klarna/notification', $urlParams),
+        ];
 
         /**
          * Merchant reference
          */
         $merchantReferences = new Varien_Object(
-            array(
-            'merchant_reference1' => $quote->getReservedOrderId()
-            )
+            [
+                'merchant_reference1' => $quote->getReservedOrderId(),
+            ],
         );
 
         Mage::dispatchEvent(
-            'klarna_payments_merchant_reference_update', array(
-            'quote'                     => $quote,
-            'merchant_reference_object' => $merchantReferences
-            )
+            'klarna_payments_merchant_reference_update',
+            [
+                'quote'                     => $quote,
+                'merchant_reference_object' => $merchantReferences,
+            ],
         );
 
         if ($merchantReferences->getData('merchant_reference1')) {
@@ -292,7 +292,7 @@ class Klarna_Payments_Model_Api_Builder_Kasper extends Klarna_Core_Model_Api_Bui
 
         $create = array_filter($create);
 
-        $missingAttributes = array();
+        $missingAttributes = [];
         foreach ($requiredAttributes as $requiredAttribute) {
             if (empty($create[$requiredAttribute])) {
                 $missingAttributes[] = $requiredAttribute;
@@ -325,11 +325,11 @@ class Klarna_Payments_Model_Api_Builder_Kasper extends Klarna_Core_Model_Api_Bui
         /** @var Mage_Sales_Model_Quote $quote */
         $quote = $this->getObject();
 
-        return array_filter(array(
+        return array_filter([
             'customer' => $this->getCustomerUpdateData($quote),
             'billing_address' => $this->_getAddressData($quote, Mage_Sales_Model_Quote_Address::TYPE_BILLING),
-            'shipping_address' => $this->_getAddressData($quote, Mage_Sales_Model_Quote_Address::TYPE_SHIPPING)
-        ));
+            'shipping_address' => $this->_getAddressData($quote, Mage_Sales_Model_Quote_Address::TYPE_SHIPPING),
+        ]);
     }
 
     /**
@@ -341,7 +341,7 @@ class Klarna_Payments_Model_Api_Builder_Kasper extends Klarna_Core_Model_Api_Bui
      */
     private function getCustomerUpdateData($quote)
     {
-        $customerData = array();
+        $customerData = [];
         if ($quote->getCustomerDob()) {
             $customerData['date_of_birth'] = Varien_Date::formatDate(strtotime($quote->getCustomerDob()), false);
         }
@@ -352,16 +352,17 @@ class Klarna_Payments_Model_Api_Builder_Kasper extends Klarna_Core_Model_Api_Bui
         }
 
         $customerUpdateData = new Varien_Object(
-            array(
-                'customer_info' => $customerData
-            )
+            [
+                'customer_info' => $customerData,
+            ],
         );
         //add additional customer data though observing this event
         Mage::dispatchEvent(
-            'klarna_payments_get_customer_update_data', array(
+            'klarna_payments_get_customer_update_data',
+            [
                 'quote' => $quote,
-                'customer_data' => $customerUpdateData
-            )
+                'customer_data' => $customerUpdateData,
+            ],
         );
         $customerData = $customerUpdateData->getData('customer_info');
         return count($customerData) > 0 ? $customerData : false;
@@ -377,7 +378,7 @@ class Klarna_Payments_Model_Api_Builder_Kasper extends Klarna_Core_Model_Api_Bui
         $requestData = Mage::app()->getRequest()->getParam('billing');
         if ($requestData) {
             if (!empty($requestData['day']) && !empty($requestData['month']) && !empty($requestData['year'])) {
-                $date = $requestData['year'] . "-" . $requestData['month'] . "-" . $requestData['day'];
+                $date = $requestData['year'] . '-' . $requestData['month'] . '-' . $requestData['day'];
                 return Varien_Date::formatDate(strtotime($date), false);
             }
         }
@@ -395,13 +396,11 @@ class Klarna_Payments_Model_Api_Builder_Kasper extends Klarna_Core_Model_Api_Bui
         }
         if (empty($this->_attachmentData)) {
             return false;
-        } else {
-            return array(
-                'content_type' => 'application/vnd.klarna.internal.emd-v2+json',
-                'body' => json_encode($this->_attachmentData)
-            );
-
         }
+        return [
+            'content_type' => 'application/vnd.klarna.internal.emd-v2+json',
+            'body' => json_encode($this->_attachmentData),
+        ];
     }
 
     /**
@@ -414,7 +413,7 @@ class Klarna_Payments_Model_Api_Builder_Kasper extends Klarna_Core_Model_Api_Bui
         if (null === $this->_attachmentDataCollector) {
             $this->_attachmentDataCollector = Mage::getSingleton(
                 'klarna_payments/payment_attachment_collector',
-                array('store' => $this->getObject()->getStore())
+                ['store' => $this->getObject()->getStore()],
             );
         }
         return $this->_attachmentDataCollector;
@@ -436,8 +435,6 @@ class Klarna_Payments_Model_Api_Builder_Kasper extends Klarna_Core_Model_Api_Bui
     /**
      * Add attachment data
      *
-     * @param array $attachmentData
-     *
      * @return $this
      */
     public function addAttachmentData(array $attachmentData)
@@ -456,7 +453,7 @@ class Klarna_Payments_Model_Api_Builder_Kasper extends Klarna_Core_Model_Api_Bui
      */
     public function resetAttachmentData()
     {
-        $this->_attachmentData = array();
+        $this->_attachmentData = [];
         return $this;
     }
 }

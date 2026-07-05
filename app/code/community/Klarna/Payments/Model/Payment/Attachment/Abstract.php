@@ -101,7 +101,7 @@ abstract class Klarna_Payments_Model_Payment_Attachment_Abstract
     {
         if ($this->_object === null) {
             Mage::throwException(
-                Mage::helper('klarna_payments')->__('Object model is not defined.')
+                Mage::helper('klarna_payments')->__('Object model is not defined.'),
             );
         }
 

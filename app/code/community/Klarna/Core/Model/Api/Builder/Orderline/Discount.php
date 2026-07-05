@@ -12,7 +12,7 @@
  */
 class Klarna_Core_Model_Api_Builder_Orderline_Discount extends Klarna_Core_Model_Api_Builder_Orderline_Abstract
 {
-    const ITEM_TYPE_DISCOUNT = 'discount';
+    public const ITEM_TYPE_DISCOUNT = 'discount';
 
     /**
      * Collect totals process.
@@ -21,6 +21,7 @@ class Klarna_Core_Model_Api_Builder_Orderline_Discount extends Klarna_Core_Model
      *
      * @return $this
      */
+    #[\Override]
     public function collect($checkout)
     {
         $object = $checkout->getObject();
@@ -52,17 +53,17 @@ class Klarna_Core_Model_Api_Builder_Orderline_Discount extends Klarna_Core_Model
             }
 
             $checkout->addData(
-                array(
-                'discount_unit_price'   => -$helper->toApiFloat($unitPrice),
-                'discount_tax_rate'     => $taxRate,
-                'discount_total_amount' => -$helper->toApiFloat($totalAmount),
-                'discount_tax_amount'   => -$helper->toApiFloat($taxAmount),
-                'discount_title'        => $total->getTitle(),
-                'discount_reference'    => $total->getCode()
+                [
+                    'discount_unit_price'   => -$helper->toApiFloat($unitPrice),
+                    'discount_tax_rate'     => $taxRate,
+                    'discount_total_amount' => -$helper->toApiFloat($totalAmount),
+                    'discount_tax_amount'   => -$helper->toApiFloat($taxAmount),
+                    'discount_title'        => $total->getTitle(),
+                    'discount_reference'    => $total->getCode(),
 
-                )
+                ],
             );
-        } elseif (((float)$object->getDiscountAmount()) != 0) {
+        } elseif (((float) $object->getDiscountAmount()) != 0) {
             if ($object->getDiscountDescription()) {
                 $discountLabel = Mage::helper('sales')->__('Discount (%s)', $object->getDiscountDescription());
             } else {
@@ -84,15 +85,15 @@ class Klarna_Core_Model_Api_Builder_Orderline_Discount extends Klarna_Core_Model
             }
 
             $checkout->addData(
-                array(
-                'discount_unit_price'   => -$helper->toApiFloat($unitPrice),
-                'discount_tax_rate'     => $taxRate,
-                'discount_total_amount' => -$helper->toApiFloat($totalAmount),
-                'discount_tax_amount'   => -$helper->toApiFloat($taxAmount),
-                'discount_title'        => $discountLabel,
-                'discount_reference'    => self::ITEM_TYPE_DISCOUNT
+                [
+                    'discount_unit_price'   => -$helper->toApiFloat($unitPrice),
+                    'discount_tax_rate'     => $taxRate,
+                    'discount_total_amount' => -$helper->toApiFloat($totalAmount),
+                    'discount_tax_amount'   => -$helper->toApiFloat($taxAmount),
+                    'discount_title'        => $discountLabel,
+                    'discount_reference'    => self::ITEM_TYPE_DISCOUNT,
 
-                )
+                ],
             );
         }
 
@@ -106,20 +107,21 @@ class Klarna_Core_Model_Api_Builder_Orderline_Discount extends Klarna_Core_Model
      *
      * @return $this
      */
+    #[\Override]
     public function fetch($checkout)
     {
         if ($checkout->getDiscountReference()) {
             $checkout->addOrderLine(
-                array(
-                'type'             => self::ITEM_TYPE_DISCOUNT,
-                'reference'        => $checkout->getDiscountReference(),
-                'name'             => $checkout->getDiscountTitle(),
-                'quantity'         => 1,
-                'unit_price'       => $checkout->getDiscountUnitPrice(),
-                'tax_rate'         => $checkout->getDiscountTaxRate(),
-                'total_amount'     => $checkout->getDiscountTotalAmount(),
-                'total_tax_amount' => $checkout->getDiscountTaxAmount(),
-                )
+                [
+                    'type'             => self::ITEM_TYPE_DISCOUNT,
+                    'reference'        => $checkout->getDiscountReference(),
+                    'name'             => $checkout->getDiscountTitle(),
+                    'quantity'         => 1,
+                    'unit_price'       => $checkout->getDiscountUnitPrice(),
+                    'tax_rate'         => $checkout->getDiscountTaxRate(),
+                    'total_amount'     => $checkout->getDiscountTotalAmount(),
+                    'total_tax_amount' => $checkout->getDiscountTaxAmount(),
+                ],
             );
         }
 

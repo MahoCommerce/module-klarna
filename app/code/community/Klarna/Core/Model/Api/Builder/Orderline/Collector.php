@@ -24,7 +24,7 @@ class Klarna_Core_Model_Api_Builder_Orderline_Collector
      *
      * @var array
      */
-    protected $_collectors = array();
+    protected $_collectors = [];
 
     /**
      * Init corresponding models
@@ -90,7 +90,7 @@ class Klarna_Core_Model_Api_Builder_Orderline_Collector
         if (!$model instanceof Klarna_Core_Model_Api_Builder_Orderline_Abstract) {
             Mage::throwException(
                 Mage::helper('klarna_core')
-                    ->__('The order item model should be extended from Klarna_Core_Model_Api_Builder_Orderline_Abstract.')
+                    ->__('The order item model should be extended from Klarna_Core_Model_Api_Builder_Orderline_Abstract.'),
             );
         }
 

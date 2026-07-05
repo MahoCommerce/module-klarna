@@ -21,26 +21,26 @@ class Klarna_Core_Model_Api_ApiTypeAbstract extends Varien_Object
     /**
      * Order statuses
      */
-    const ORDER_STATUS_AUTHORIZED    = 'AUTHORIZED';
-    const ORDER_STATUS_PART_CAPTURED = 'PART_CAPTURED';
-    const ORDER_STATUS_CAPTURED      = 'CAPTURED';
-    const ORDER_STATUS_CANCELLED     = 'CANCELLED';
-    const ORDER_STATUS_EXPIRED       = 'EXPIRED';
-    const ORDER_STATUS_CLOSED        = 'CLOSED';
+    public const ORDER_STATUS_AUTHORIZED    = 'AUTHORIZED';
+    public const ORDER_STATUS_PART_CAPTURED = 'PART_CAPTURED';
+    public const ORDER_STATUS_CAPTURED      = 'CAPTURED';
+    public const ORDER_STATUS_CANCELLED     = 'CANCELLED';
+    public const ORDER_STATUS_EXPIRED       = 'EXPIRED';
+    public const ORDER_STATUS_CLOSED        = 'CLOSED';
 
     /**
      * Order fraud statuses
      */
-    const ORDER_FRAUD_STATUS_ACCEPTED = 'ACCEPTED';
-    const ORDER_FRAUD_STATUS_REJECTED = 'REJECTED';
-    const ORDER_FRAUD_STATUS_PENDING  = 'PENDING';
+    public const ORDER_FRAUD_STATUS_ACCEPTED = 'ACCEPTED';
+    public const ORDER_FRAUD_STATUS_REJECTED = 'REJECTED';
+    public const ORDER_FRAUD_STATUS_PENDING  = 'PENDING';
 
     /**
      * Order notification statuses
      */
-    const ORDER_NOTIFICATION_FRAUD_REJECTED = 'FRAUD_RISK_REJECTED';
-    const ORDER_NOTIFICATION_FRAUD_ACCEPTED = 'FRAUD_RISK_ACCEPTED';
-    const ORDER_NOTIFICATION_FRAUD_STOPPED  = 'FRAUD_RISK_STOPPED';
+    public const ORDER_NOTIFICATION_FRAUD_REJECTED = 'FRAUD_RISK_REJECTED';
+    public const ORDER_NOTIFICATION_FRAUD_ACCEPTED = 'FRAUD_RISK_ACCEPTED';
+    public const ORDER_NOTIFICATION_FRAUD_STOPPED  = 'FRAUD_RISK_STOPPED';
 
     /**
      * @var Varien_Object
@@ -151,8 +151,6 @@ class Klarna_Core_Model_Api_ApiTypeAbstract extends Varien_Object
 
     /**
      * Set Klarna checkout order details
-     *
-     * @param Varien_Object $klarnaOrder
      *
      * @return $this
      */

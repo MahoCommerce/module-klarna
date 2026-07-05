@@ -12,11 +12,8 @@
  */
 class Klarna_Payments_Model_Observer
 {
-
     /**
      * Changing the klarna payment code to its default
-     *
-     * @param Varien_Event_Observer $observer
      */
     public function adjustPaymentMethodCode(Varien_Event_Observer $observer)
     {
@@ -25,11 +22,11 @@ class Klarna_Payments_Model_Observer
         $method = $input->getData('method');
 
         $klarnaKeyStart = 'klarna_payments_';
-        if (strpos($method, $klarnaKeyStart) !== 0) {
+        if (!str_starts_with((string) $method, $klarnaKeyStart)) {
             return;
         }
 
-        $paymentKey = substr($method, strlen($klarnaKeyStart));
+        $paymentKey = substr((string) $method, strlen($klarnaKeyStart));
 
         /** @var Mage_Checkout_Model_Session $checkoutSession */
         $checkoutSession = Mage::getSingleton('checkout/session');
@@ -45,8 +42,6 @@ class Klarna_Payments_Model_Observer
      * Because of Klarna Payments's redirect, Magento does not send the order email.
      *
      * This method will trigger the email sending even though there is a redirect
-     *
-     * @param Varien_Event_Observer $observer
      */
     public function checkoutSubmitAfterAllSendOrderEmail(Varien_Event_Observer $observer)
     {
@@ -63,8 +58,6 @@ class Klarna_Payments_Model_Observer
 
     /**
      * Clear Klarna Payment session variables when the checkout session is cleared
-     *
-     * @param Varien_Event_Observer $observer
      */
     public function checkoutSessionClear(Varien_Event_Observer $observer)
     {
@@ -90,8 +83,6 @@ class Klarna_Payments_Model_Observer
 
     /**
      * validate order total for OSC checkout
-     *
-     * @param Varien_Event_Observer $observer
      */
     public function checkOrderTotalForOsc(Varien_Event_Observer $observer)
     {
@@ -114,8 +105,6 @@ class Klarna_Payments_Model_Observer
 
     /**
      * record selected payment type
-     *
-     * @param Varien_Event_Observer $observer
      */
     public function recordPaymentType(Varien_Event_Observer $observer)
     {
@@ -127,8 +116,8 @@ class Klarna_Payments_Model_Observer
             $order = $observer->getOrder();
             $order->getPayment()->setAdditionalInformation(
                 'klarna_payment_type',
-                $selectPaymentType
-            );            
+                $selectPaymentType,
+            );
             $order->getPayment()->save();
         }
     }

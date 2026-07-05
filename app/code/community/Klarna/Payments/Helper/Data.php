@@ -12,9 +12,9 @@
  */
 class Klarna_Payments_Helper_Data extends Mage_Payment_Helper_Data
 {
-    const MERCHANT_PORTAL_US = 'https://us.portal.klarna.com/orders/';
-    const MERCHANT_PORTAL_EU = 'https://eu.portal.klarna.com/orders/';
-    const MERCHANT_PORTAL_OC = 'https://oc.portal.klarna.com/orders/';
+    public const MERCHANT_PORTAL_US = 'https://us.portal.klarna.com/orders/';
+    public const MERCHANT_PORTAL_EU = 'https://eu.portal.klarna.com/orders/';
+    public const MERCHANT_PORTAL_OC = 'https://oc.portal.klarna.com/orders/';
 
     /**
      * Check if a store allows data sharing
@@ -42,9 +42,10 @@ class Klarna_Payments_Helper_Data extends Mage_Payment_Helper_Data
             return 'en_us';
         }
 
-        return strtolower($locale);
+        return strtolower((string) $locale);
     }
 
+    #[\Override]
     public function getStoreMethods($store = null, $quote = null)
     {
         $res = parent::getStoreMethods($store, $quote);
@@ -58,7 +59,6 @@ class Klarna_Payments_Helper_Data extends Mage_Payment_Helper_Data
                 $klarnaQuote = Mage::helper('klarna_payments/checkout')->getKlarnaQuote();
                 foreach ($klarnaQuote->getPaymentMethodCategories() as $values) {
 
-                    /** @var Klarna_Payments_Model_Payment_Payments $newRes */
                     $newRes = clone $resKlarna;
                     $newRes->setCategoryInformation($values);
                     $newRes->setCode('klarna_payments_' . $values['identifier']);
@@ -71,7 +71,7 @@ class Klarna_Payments_Helper_Data extends Mage_Payment_Helper_Data
             }
         }
 
-        usort($res, array($this, '_sortMethods'));
+        usort($res, $this->_sortMethods(...));
         return $res;
     }
 
@@ -97,8 +97,8 @@ class Klarna_Payments_Helper_Data extends Mage_Payment_Helper_Data
             $url = self::MERCHANT_PORTAL_EU;
         }
 
-        $merchantIdArray = explode("_", $merchantId);
-        $url .= "merchants/" . $merchantIdArray[0] . "/orders/" . $klarnaOrder->getSessionId();
+        $merchantIdArray = explode('_', (string) $merchantId);
+        $url .= 'merchants/' . $merchantIdArray[0] . '/orders/' . $klarnaOrder->getSessionId();
         return $url;
     }
 
@@ -120,6 +120,6 @@ class Klarna_Payments_Helper_Data extends Mage_Payment_Helper_Data
                 }
             }
         }
-        return ucwords(str_replace("_", " ", $indentifier));
+        return ucwords(str_replace('_', ' ', $indentifier));
     }
 }

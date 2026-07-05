@@ -15,16 +15,16 @@ class Klarna_Core_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * Klarna node paths
      */
-    const XPATH_API_VERSIONS            = 'klarna/api_versions';
-    const XPATH_API_TYPES               = 'klarna/api_types';
-    const XPATH_API_PURCHASE_TYPES      = 'klarna/api_purchase_types';
-    const XPATH_API_POST_PURCHASE_TYPES = 'klarna/api_post_purchase_types';
+    public const XPATH_API_VERSIONS            = 'klarna/api_versions';
+    public const XPATH_API_TYPES               = 'klarna/api_types';
+    public const XPATH_API_PURCHASE_TYPES      = 'klarna/api_purchase_types';
+    public const XPATH_API_POST_PURCHASE_TYPES = 'klarna/api_post_purchase_types';
 
     /**
      * API types
      */
-    const API_TYPE_PURCHASE      = 'purchase';
-    const API_TYPE_POST_PURCHASE = 'post_purchase';
+    public const API_TYPE_PURCHASE      = 'purchase';
+    public const API_TYPE_POST_PURCHASE = 'post_purchase';
 
     /**
      * Cache variables
@@ -33,7 +33,7 @@ class Klarna_Core_Helper_Data extends Mage_Core_Helper_Abstract
     protected $_cacheApiVersions;
     protected $_cachePurchaseApiTypes;
     protected $_cachePostPurchaseApiTypes;
-    protected $_cacheStoreApiVersion = array();
+    protected $_cacheStoreApiVersion = [];
 
     /**
      * Determine if current store supports the use of partial captures and refunds
@@ -44,7 +44,7 @@ class Klarna_Core_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getPartialPaymentSupport($store = null)
     {
-        return !(bool)$this->getStoreApiVersionOptions($store)->getPartialPaymentDisabled();
+        return !(bool) $this->getStoreApiVersionOptions($store)->getPartialPaymentDisabled();
     }
 
     /**
@@ -56,7 +56,7 @@ class Klarna_Core_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getDelayedPushNotification($store = null)
     {
-        return !(bool)$this->getStoreApiVersionOptions($store)->getDelayedPushNotification();
+        return !(bool) $this->getStoreApiVersionOptions($store)->getDelayedPushNotification();
     }
 
     /**
@@ -68,7 +68,7 @@ class Klarna_Core_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getSeparateTaxLine($store = null)
     {
-        return (bool)$this->getStoreApiVersionOptions($store)->getSeparateTaxLine();
+        return (bool) $this->getStoreApiVersionOptions($store)->getSeparateTaxLine();
     }
 
     /**
@@ -241,9 +241,10 @@ class Klarna_Core_Helper_Data extends Mage_Core_Helper_Abstract
             $types = $this->_getXpathAsArray(self::XPATH_API_TYPES);
             foreach ($types as &$configObject) {
                 Mage::dispatchEvent(
-                    'klarna_load_api_config', array(
-                    'options' => $configObject
-                    )
+                    'klarna_load_api_config',
+                    [
+                        'options' => $configObject,
+                    ],
                 );
             }
 
@@ -277,10 +278,10 @@ class Klarna_Core_Helper_Data extends Mage_Core_Helper_Abstract
             $versions = $this->_getXpathAsArray(self::XPATH_API_VERSIONS);
 
             foreach ($versions as &$configObject) {
-                $options = $configObject->hasOptions() ? $configObject->getOptions() : array();
+                $options = $configObject->hasOptions() ? $configObject->getOptions() : [];
 
                 $apiTypeObject  = $this->getApiType($configObject->getType());
-                $apiTypeOptions = $apiTypeObject->hasOptions() ? $apiTypeObject->getOptions() : array();
+                $apiTypeOptions = $apiTypeObject->hasOptions() ? $apiTypeObject->getOptions() : [];
 
                 $options       = array_merge($apiTypeOptions, $options);
                 $optionsObject = new Varien_Object($options);
@@ -288,9 +289,10 @@ class Klarna_Core_Helper_Data extends Mage_Core_Helper_Abstract
                 $configObject->setOptions($optionsObject);
 
                 Mage::dispatchEvent(
-                    'klarna_load_version_details', array(
-                    'options' => $configObject
-                    )
+                    'klarna_load_version_details',
+                    [
+                        'options' => $configObject,
+                    ],
                 );
             }
 
@@ -371,7 +373,7 @@ class Klarna_Core_Helper_Data extends Mage_Core_Helper_Abstract
      */
     protected function _getXpathAsArray($xpath)
     {
-        $array = array();
+        $array = [];
 
         if ($typeConfig = Mage::getConfig()->getNode($xpath)) {
             foreach ($typeConfig->children() as $code => $details) {

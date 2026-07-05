@@ -14,8 +14,6 @@ class Klarna_Core_Model_Observer
 {
     /**
      * Generate item list for payment capture
-     *
-     * @param Varien_Event_Observer $observer
      */
     public function prepareCapture(Varien_Event_Observer $observer)
     {

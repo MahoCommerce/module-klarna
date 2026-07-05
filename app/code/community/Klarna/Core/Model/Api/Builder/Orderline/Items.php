@@ -15,8 +15,8 @@ class Klarna_Core_Model_Api_Builder_Orderline_Items extends Klarna_Core_Model_Ap
     /**
      * Checkout item types
      */
-    const ITEM_TYPE_PHYSICAL = 'physical';
-    const ITEM_TYPE_VIRTUAL  = 'digital';
+    public const ITEM_TYPE_PHYSICAL = 'physical';
+    public const ITEM_TYPE_VIRTUAL  = 'digital';
 
     /**
      * Order lines is not a total collector, it's a line item collector
@@ -32,12 +32,13 @@ class Klarna_Core_Model_Api_Builder_Orderline_Items extends Klarna_Core_Model_Ap
      *
      * @return $this
      */
+    #[\Override]
     public function collect($checkout)
     {
         $object     = $checkout->getObject();
         $helper     = Mage::helper('klarna_core');
         $calculator = Mage::getSingleton('tax/calculation');
-        $items      = array();
+        $items      = [];
 
         foreach ($object->getAllItems() as $item) {
             $qtyMultiplier = 1;
@@ -111,15 +112,15 @@ class Klarna_Core_Model_Api_Builder_Orderline_Items extends Klarna_Core_Model_Ap
                 $imageUrl = $this->getImageUrl($product);
             }
 
-            $_item = array(
+            $_item = [
                 'type'          => $item->getIsVirtual() ? self::ITEM_TYPE_VIRTUAL : self::ITEM_TYPE_PHYSICAL,
                 'reference'     => substr($item->getSku(), 0, 64),
                 'name'          => $item->getName(),
                 'quantity'      => ceil($item->getQty() * $qtyMultiplier),
                 'discount_rate' => 0,
                 'product_url'   => $productUrl,
-                'image_url'     => $imageUrl
-            );
+                'image_url'     => $imageUrl,
+            ];
 
             if ($helper->getSeparateTaxLine($object->getStore())) {
                 $_item['tax_rate']         = 0;
@@ -144,11 +145,12 @@ class Klarna_Core_Model_Api_Builder_Orderline_Items extends Klarna_Core_Model_Ap
 
             $_item = new Varien_Object($_item);
             Mage::dispatchEvent(
-                'klarna_core_orderline_item', array(
-                'checkout'    => $checkout,
-                'object_item' => $item,
-                'klarna_item' => $_item
-                )
+                'klarna_core_orderline_item',
+                [
+                    'checkout'    => $checkout,
+                    'object_item' => $item,
+                    'klarna_item' => $_item,
+                ],
             );
 
             $items[] = $_item->toArray();
@@ -182,6 +184,7 @@ class Klarna_Core_Model_Api_Builder_Orderline_Items extends Klarna_Core_Model_Ap
      *
      * @return $this
      */
+    #[\Override]
     public function fetch($checkout)
     {
         if ($checkout->getItems()) {

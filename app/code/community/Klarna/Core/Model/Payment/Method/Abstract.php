@@ -20,9 +20,9 @@ class Klarna_Core_Model_Payment_Method_Abstract extends Mage_Payment_Model_Metho
     /**
      * Fraud status types
      */
-    const FRAUD_STATUS_ACCEPTED = 'ACCEPTED';
-    const FRAUD_STATUS_REJECTED = 'REJECTED';
-    const FRAUD_STATUS_PENDING  = 'PENDING';
+    public const FRAUD_STATUS_ACCEPTED = 'ACCEPTED';
+    public const FRAUD_STATUS_REJECTED = 'REJECTED';
+    public const FRAUD_STATUS_PENDING  = 'PENDING';
 
     /**
      * @var Klarna_Core_Helper_Data
@@ -48,6 +48,7 @@ class Klarna_Core_Model_Payment_Method_Abstract extends Mage_Payment_Model_Metho
      *
      * @return $this
      */
+    #[\Override]
     public function initialize($paymentAction, $stateObject)
     {
         $payment = $this->getInfoInstance();
@@ -82,6 +83,7 @@ class Klarna_Core_Model_Payment_Method_Abstract extends Mage_Payment_Model_Metho
      *
      * @return bool
      */
+    #[\Override]
     public function canCapturePartial()
     {
         /** @var Mage_Sales_Model_Order $order */
@@ -89,16 +91,16 @@ class Klarna_Core_Model_Payment_Method_Abstract extends Mage_Payment_Model_Metho
 
         if ($order && $order->getId()) {
             $canCapturePartialObject = new Varien_Object(
-                array(
-                'can_partial' => $this->_helper->getPartialPaymentSupport($order->getStore())
-                )
+                [
+                    'can_partial' => $this->_helper->getPartialPaymentSupport($order->getStore()),
+                ],
             );
 
             $checkoutType = $this->_helper->getStoreApiTypeCode($order->getStore());
-            $eventData    = array(
+            $eventData    = [
                 'flag_object' => $canCapturePartialObject,
-                'order'       => $order
-            );
+                'order'       => $order,
+            ];
 
             Mage::dispatchEvent('klarna_core_payment_can_capture_partial', $eventData);
             Mage::dispatchEvent("klarna_core_payment_type_{$checkoutType}_can_capture_partial", $eventData);
@@ -114,6 +116,7 @@ class Klarna_Core_Model_Payment_Method_Abstract extends Mage_Payment_Model_Metho
      *
      * @return bool
      */
+    #[\Override]
     public function canRefundPartialPerInvoice()
     {
         /** @var Mage_Sales_Model_Order $order */
@@ -121,16 +124,16 @@ class Klarna_Core_Model_Payment_Method_Abstract extends Mage_Payment_Model_Metho
 
         if ($order && $order->getId()) {
             $canInvoicePartialObject = new Varien_Object(
-                array(
-                'can_partial' => $this->_helper->getPartialPaymentSupport($order->getStore())
-                )
+                [
+                    'can_partial' => $this->_helper->getPartialPaymentSupport($order->getStore()),
+                ],
             );
 
             $checkoutType = $this->_helper->getStoreApiTypeCode($order->getStore());
-            $eventData    = array(
+            $eventData    = [
                 'flag_object' => $canInvoicePartialObject,
-                'order'       => $order
-            );
+                'order'       => $order,
+            ];
 
             Mage::dispatchEvent('klarna_core_payment_can_refund_partial_per_invoice', $eventData);
             Mage::dispatchEvent("klarna_core_payment_type_{$checkoutType}_can_refund_partial_per_invoice", $eventData);
@@ -146,6 +149,7 @@ class Klarna_Core_Model_Payment_Method_Abstract extends Mage_Payment_Model_Metho
      *
      * @return string
      */
+    #[\Override]
     public function getConfigPaymentAction()
     {
         return self::ACTION_AUTHORIZE;
@@ -154,11 +158,10 @@ class Klarna_Core_Model_Payment_Method_Abstract extends Mage_Payment_Model_Metho
     /**
      * Fetch transaction info
      *
-     * @param Mage_Payment_Model_Info $payment
      * @param string                  $transactionId
-     *
      * @return array
      */
+    #[\Override]
     public function fetchTransactionInfo(Mage_Payment_Model_Info $payment, $transactionId)
     {
         $order = $payment->getOrder();
@@ -182,17 +185,16 @@ class Klarna_Core_Model_Payment_Method_Abstract extends Mage_Payment_Model_Metho
             }
         }
 
-        return array();
+        return [];
     }
 
     /**
      * Capture payment method
      *
-     * @param Varien_Object $payment
      * @param float         $amount
-     *
      * @return $this
      */
+    #[\Override]
     public function capture(Varien_Object $payment, $amount)
     {
         $klarnaOrder = $this->getKlarnaOrder($payment->getOrder());
@@ -218,10 +220,9 @@ class Klarna_Core_Model_Payment_Method_Abstract extends Mage_Payment_Model_Metho
     /**
      * Cancel payment method
      *
-     * @param Varien_Object $payment
-     *
      * @return $this
      */
+    #[\Override]
     public function cancel(Varien_Object $payment)
     {
         $klarnaOrder = $this->getKlarnaOrder($payment->getOrder());
@@ -252,10 +253,9 @@ class Klarna_Core_Model_Payment_Method_Abstract extends Mage_Payment_Model_Metho
      *
      * Same as cancel
      *
-     * @param Varien_Object $payment
-     *
      * @return $this
      */
+    #[\Override]
     public function void(Varien_Object $payment)
     {
         return $this->cancel($payment);
@@ -264,11 +264,10 @@ class Klarna_Core_Model_Payment_Method_Abstract extends Mage_Payment_Model_Metho
     /**
      * Refund specified amount for payment
      *
-     * @param Varien_Object $payment
      * @param float         $amount
-     *
      * @return $this
      */
+    #[\Override]
     public function refund(Varien_Object $payment, $amount)
     {
         $klarnaOrder = $this->getKlarnaOrder($payment->getOrder());

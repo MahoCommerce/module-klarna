@@ -12,7 +12,6 @@
  */
 class Klarna_Payments_Model_Filter
 {
-
     protected $logo = '';
 
     /**
@@ -69,8 +68,8 @@ class Klarna_Payments_Model_Filter
     protected function doFilter($construction, $logo)
     {
         $params = $this->_getIncludeParameters($construction[2]);
-        $width = isset($params['width']) ? (int)$params['width'] : 50;
-        $style = isset($params['style']) ? $params['style'] : 'display: inline-block; vertical-align:text-top';
+        $width = isset($params['width']) ? (int) $params['width'] : 50;
+        $style = $params['style'] ?? 'display: inline-block; vertical-align:text-top';
         $locale = Mage::helper('klarna_payments')->getLocale();
         $src = sprintf($logo, $locale) . '?width=' . (2 * $width);
 

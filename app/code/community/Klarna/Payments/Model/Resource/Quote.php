@@ -15,7 +15,7 @@ class Klarna_Payments_Model_Resource_Quote extends Mage_Core_Model_Resource_Db_A
     /**
      * Init
      */
-    public function _construct()
+    protected function _construct()
     {
         $this->_init('klarna_payments/quote', 'payments_quote_id');
     }
