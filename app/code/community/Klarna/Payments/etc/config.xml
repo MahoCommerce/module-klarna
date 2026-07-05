@@ -46,57 +46,6 @@ SPDX-License-Identifier: Apache-2.0
                 </setup>
             </klarna_payments_setup>
         </resources>
-        <events>
-            <sales_quote_payment_import_data_before>
-                <observers>
-                    <klarna_payments_method>
-                        <type>singleton</type>
-                        <class>klarna_payments/observer</class>
-                        <method>adjustPaymentMethodCode</method>
-                    </klarna_payments_method>
-                </observers>
-            </sales_quote_payment_import_data_before>
-            <checkout_submit_all_after>
-                <observers>
-                    <klarna_payments_send_email>
-                        <type>singleton</type>
-                        <class>klarna_payments/observer</class>
-                        <method>checkoutSubmitAfterAllSendOrderEmail</method>
-                    </klarna_payments_send_email>
-                    <klarna_payments_record_payment_type>
-                        <type>singleton</type>
-                        <class>klarna_payments/observer</class>
-                        <method>recordPaymentType</method>
-                    </klarna_payments_record_payment_type>
-                </observers>
-            </checkout_submit_all_after>
-            <checkout_quote_destroy>
-                <observers>
-                    <klarna_payments_checkout_session_clear>
-                        <type>singleton</type>
-                        <class>klarna_payments/observer</class>
-                        <method>checkoutSessionClear</method>
-                    </klarna_payments_checkout_session_clear>
-                </observers>
-            </checkout_quote_destroy>
-            <klarna_core_client_user_agent_string>
-                <observers>
-                    <klarna_payments_ua>
-                        <class>klarna_payments/observer</class>
-                        <method>klarnaCoreClientUserAgentString</method>
-                    </klarna_payments_ua>
-                </observers>
-            </klarna_core_client_user_agent_string>
-            <klarna_payments_request_create_after>
-                <observers>
-                    <klarna_check_order_total_osc>
-                        <type>singleton</type>
-                        <class>klarna_payments/observer</class>
-                        <method>checkOrderTotalForOsc</method>
-                    </klarna_check_order_total_osc>
-                </observers>
-            </klarna_payments_request_create_after>
-        </events>
     </global>
     <frontend>
         <layout>

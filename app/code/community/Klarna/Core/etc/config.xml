@@ -38,17 +38,6 @@ SPDX-License-Identifier: Apache-2.0
                 <class>Klarna_Core_Helper</class>
             </klarna_core>
         </helpers>
-        <events>
-            <sales_order_payment_capture>
-                <observers>
-                    <klarna_prepare_capture>
-                        <type>singleton</type>
-                        <class>klarna_core/observer</class>
-                        <method>prepareCapture</method>
-                    </klarna_prepare_capture>
-                </observers>
-            </sales_order_payment_capture>
-        </events>
         <blocks>
             <adminhtml>
                 <rewrite>
@@ -61,15 +50,6 @@ SPDX-License-Identifier: Apache-2.0
         <secure_url>
             <klarna_notification_url>/klarna/notification</klarna_notification_url>
         </secure_url>
-        <routers>
-            <klarna_core>
-                <use>standard</use>
-                <args>
-                    <module>Klarna_Core</module>
-                    <frontName>klarna</frontName>
-                </args>
-            </klarna_core>
-        </routers>
         <translate>
             <modules>
                 <Klarna_Core>

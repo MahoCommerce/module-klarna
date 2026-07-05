@@ -22,16 +22,6 @@ SPDX-License-Identifier: Apache-2.0
                 <class>Klarna_OrderManagement_Helper</class>
             </klarna_ordermanagement>
         </helpers>
-        <events>
-            <klarna_core_client_user_agent_string>
-                <observers>
-                    <klarna_ordermanagement_ua>
-                        <class>klarna_ordermanagement/observer</class>
-                        <method>klarnaCoreClientUserAgentString</method>
-                    </klarna_ordermanagement_ua>
-                </observers>
-            </klarna_core_client_user_agent_string>
-        </events>
     </global>
     <adminhtml>
         <translate>

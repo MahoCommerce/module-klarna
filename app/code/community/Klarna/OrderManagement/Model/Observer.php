@@ -14,6 +14,7 @@ class Klarna_OrderManagement_Model_Observer
      *
      * @param $event
      */
+    #[\Maho\Config\Observer('klarna_core_client_user_agent_string', id: 'klarna_ordermanagement_ua')]
     public function klarnaCoreClientUserAgentString($event)
     {
         $version = Mage::getConfig()->getModuleConfig('Klarna_OrderManagement')->version;

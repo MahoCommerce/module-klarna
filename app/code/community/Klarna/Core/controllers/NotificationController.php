@@ -28,6 +28,8 @@ class Klarna_Core_NotificationController extends Mage_Core_Controller_Front_Acti
     /**
      * Klarna notification
      */
+    #[\Maho\Config\Route('/klarna/notification', name: 'klarna.notification')]
+    #[\Maho\Config\Route('/klarna/notification/index', name: 'klarna.notification.index')]
     public function indexAction()
     {
         if (!$this->getRequest()->isPost()) {
@@ -130,6 +132,7 @@ class Klarna_Core_NotificationController extends Mage_Core_Controller_Front_Acti
     /**
      * API call to notify Magento that the order is now ready to receive order management calls
      */
+    #[\Maho\Config\Route('/klarna/notification/push', name: 'klarna.notification.push')]
     public function pushAction()
     {
         if (!$this->getRequest()->isPost()) {
