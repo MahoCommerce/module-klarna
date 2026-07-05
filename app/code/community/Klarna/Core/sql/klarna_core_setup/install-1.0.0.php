@@ -7,7 +7,7 @@
  * @package Klarna_Core
  */
 
-/** @var $installer Mage_Sales_Model_Resource_Setup */
+/** @var Mage_Sales_Model_Resource_Setup $this */
 $installer = $this;
 
 $installer->startSetup();

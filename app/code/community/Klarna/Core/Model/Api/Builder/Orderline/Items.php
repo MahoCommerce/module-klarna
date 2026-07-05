@@ -39,9 +39,13 @@ class Klarna_Core_Model_Api_Builder_Orderline_Items extends Klarna_Core_Model_Ap
         $helper     = Mage::helper('klarna_core');
         $calculator = Mage::getSingleton('tax/calculation');
         $items      = [];
+        /** @var Mage_Core_Model_Store $objectStore */
+        $objectStore = $object->getStore();
 
         foreach ($object->getAllItems() as $item) {
             $qtyMultiplier = 1;
+            $productUrl    = null;
+            $imageUrl      = null;
 
             // Order item checks
             if (($item instanceof Mage_Sales_Model_Order_Invoice_Item
@@ -79,7 +83,7 @@ class Klarna_Core_Model_Api_Builder_Orderline_Items extends Klarna_Core_Model_Ap
 
                 $store = $orderItem->getOrder()->getStore();
                 $product = $orderItem->getProduct();
-                $product->setStoreId($store->getId());
+                $product->setStoreId((int) $store->getId());
                 $productUrl = $product->getUrlInStore();
                 $imageUrl = $this->getImageUrl($product);
             }
@@ -107,7 +111,7 @@ class Klarna_Core_Model_Api_Builder_Orderline_Items extends Klarna_Core_Model_Ap
 
                 $store = $item->getStore();
                 $product = $item->getProduct();
-                $product->setStoreId($store->getId());
+                $product->setStoreId((int) $store->getId());
                 $productUrl = $product->getUrlInStore();
                 $imageUrl = $this->getImageUrl($product);
             }
@@ -122,7 +126,7 @@ class Klarna_Core_Model_Api_Builder_Orderline_Items extends Klarna_Core_Model_Ap
                 'image_url'     => $imageUrl,
             ];
 
-            if ($helper->getSeparateTaxLine($object->getStore())) {
+            if ($helper->getSeparateTaxLine($objectStore)) {
                 $_item['tax_rate']         = 0;
                 $_item['total_tax_amount'] = 0;
                 $_item['unit_price']       = $helper->toApiFloat($item->getBasePrice())
@@ -164,8 +168,8 @@ class Klarna_Core_Model_Api_Builder_Orderline_Items extends Klarna_Core_Model_Ap
     /**
      * Get image for product
      *
-     * @param Product $product
-     * @return string
+     * @param Mage_Catalog_Model_Product $product
+     * @return string|null
      */
     protected function getImageUrl($product)
     {
@@ -173,7 +177,9 @@ class Klarna_Core_Model_Api_Builder_Orderline_Items extends Klarna_Core_Model_Ap
             return null;
         }
 
-        $baseUrl = Mage::app()->getStore($product->getStoreId())->getBaseUrl(Mage_Core_Model_Store::URL_TYPE_MEDIA);
+        /** @var Mage_Core_Model_Store $store */
+        $store = Mage::app()->getStore($product->getStoreId());
+        $baseUrl = $store->getBaseUrl(Mage_Core_Model_Store::URL_TYPE_MEDIA);
         return $baseUrl . 'catalog/product' . $product->getSmallImage();
     }
 

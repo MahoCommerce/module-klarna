@@ -10,7 +10,7 @@
 /**
  * Klarna api integration abstract
  *
- * @method Klarna_Core_Model_Api_ApiTypeAbstract setStore(Mage_Core_Model_Store $store)
+ * @method Klarna_Core_Model_Api_ApiTypeAbstract setStore(?Mage_Core_Model_Store $store)
  * @method Mage_Core_Model_Store getStore()
  * @method Klarna_Core_Model_Api_ApiTypeAbstract setConfig(Varien_Object $config)
  * @method Varien_Object getConfig()
@@ -112,7 +112,7 @@ class Klarna_Core_Model_Api_ApiTypeAbstract extends Varien_Object
     {
         $generator = Mage::getModel($this->_getBuilderType());
 
-        if (!$generator) {
+        if (!$generator instanceof Klarna_Core_Model_Api_Builder_Abstract) {
             throw new Klarna_Core_Exception('Invalid api generator type code.');
         }
 

@@ -42,7 +42,7 @@ class Klarna_Payments_Model_Api_Kasper_Purchase extends Klarna_Core_Model_Api_Pu
                 $klarnaOrder = $api->createSession($data);
             }
         } catch (Klarna_Payments_BuilderException $e) {
-            Mage::log($e->getMessage(), Mage::LOG_CRIT, 'klarna_payments_error.log');
+            Mage::log($e->getMessage(), Mage::LOG_CRITICAL, 'klarna_payments_error.log');
             throw new Klarna_Core_Model_Api_Exception(
                 $this->getHelper()
                 ->__('Unable to initialize Klarna payments session'),
@@ -77,7 +77,7 @@ class Klarna_Payments_Model_Api_Kasper_Purchase extends Klarna_Core_Model_Api_Pu
     /**
      * Cancel authorization
      *
-     * @param $id
+     * @param string $id
      *
      * @return Klarna_Core_Model_Api_Response
      */

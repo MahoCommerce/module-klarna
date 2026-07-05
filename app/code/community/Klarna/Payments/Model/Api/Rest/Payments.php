@@ -32,7 +32,9 @@ class Klarna_Payments_Model_Api_Rest_Payments extends Klarna_Core_Model_Api_Rest
             ->setDefaultErrorMessage('Error: Unable to create session.')
             ->setParams($data);
 
-        return $this->request($request);
+        /** @var Klarna_Core_Model_Api_Rest_Client_Response $response */
+        $response = $this->request($request);
+        return $response;
     }
 
     /**
@@ -63,7 +65,9 @@ class Klarna_Payments_Model_Api_Rest_Payments extends Klarna_Core_Model_Api_Rest
             ->setDefaultErrorMessage('Error: Unable to update session.')
             ->setParams($data);
 
-        return $this->request($request);
+        /** @var Klarna_Core_Model_Api_Rest_Client_Response $response */
+        $response = $this->request($request);
+        return $response;
     }
 
     /**
@@ -119,7 +123,9 @@ class Klarna_Payments_Model_Api_Rest_Payments extends Klarna_Core_Model_Api_Rest
             ->setDefaultErrorMessage('Error: Unable to create order.')
             ->setParams($data);
 
-        return $this->request($request);
+        /** @var Klarna_Core_Model_Api_Rest_Client_Response $response */
+        $response = $this->request($request);
+        return $response;
     }
 
     /**
@@ -149,6 +155,8 @@ class Klarna_Payments_Model_Api_Rest_Payments extends Klarna_Core_Model_Api_Rest
             ->setMethod(Klarna_Core_Model_Api_Rest_Client::REQUEST_METHOD_DELETE)
             ->setDefaultErrorMessage('Error: Unable to cancel authorization.');
 
-        return $this->request($request);
+        /** @var Klarna_Core_Model_Api_Rest_Client_Response $response */
+        $response = $this->request($request);
+        return $response;
     }
 }

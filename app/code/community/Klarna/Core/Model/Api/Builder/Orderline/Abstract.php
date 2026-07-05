@@ -31,7 +31,7 @@ abstract class Klarna_Core_Model_Api_Builder_Orderline_Abstract
     protected $_isTotalCollector = true;
 
     /**
-     * @var Klarna_Core_Model_Api_Builder_Orderline_Abstract
+     * @var Klarna_Core_Model_Api_Builder_Abstract|null
      */
     protected $_object = null;
 
@@ -114,7 +114,7 @@ abstract class Klarna_Core_Model_Api_Builder_Orderline_Abstract
     /**
      * Get object
      *
-     * @return Klarna_Core_Model_Api_Builder_Orderline_Abstract
+     * @return Klarna_Core_Model_Api_Builder_Abstract
      */
     protected function _getObject()
     {
@@ -130,9 +130,9 @@ abstract class Klarna_Core_Model_Api_Builder_Orderline_Abstract
     /**
      * Get tax amount for discount
      *
-     * @param $subtotal
-     * @param $total
-     * @return array
+     * @param Mage_Sales_Model_Quote_Address_Total $subtotal
+     * @param Mage_Sales_Model_Quote_Address_Total $total
+     * @return float|int
      */
     public function getTaxAmount($subtotal, $total)
     {
@@ -149,7 +149,7 @@ abstract class Klarna_Core_Model_Api_Builder_Orderline_Abstract
     /**
      * Get the tax rate for the discount order line
      *
-     * @param $checkout
+     * @param Klarna_Core_Model_Api_Builder_Abstract $checkout
      *
      * @return float
      */

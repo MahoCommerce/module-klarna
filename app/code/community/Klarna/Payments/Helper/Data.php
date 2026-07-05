@@ -31,7 +31,7 @@ class Klarna_Payments_Helper_Data extends Mage_Payment_Helper_Data
     /**
      * get locale
      *
-     * @param null $store
+     * @param Mage_Core_Model_Store|int|string|null $store
      *
      * @return string
      */
@@ -78,11 +78,9 @@ class Klarna_Payments_Helper_Data extends Mage_Payment_Helper_Data
     /**
      * get link to merchant portal for order
      *
-     * @param $mageOrder
-     * @param $klarnaOrder
      * @return string
      */
-    public function getOrderMerchantPortalLink($mageOrder, $klarnaOrder)
+    public function getOrderMerchantPortalLink(Mage_Sales_Model_Order $mageOrder, Klarna_Core_Model_Order $klarnaOrder)
     {
         $store = $mageOrder->getStore();
 

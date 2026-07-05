@@ -123,7 +123,9 @@ class Klarna_Payments_Block_Form_Payments extends Mage_Payment_Block_Form
             return $result;
         }
 
-        $mark = Mage::getConfig()->getBlockClassName('klarna_payments/mark');
+        /** @var Mage_Core_Model_Config $config */
+        $config = Mage::getConfig();
+        $mark = $config->getBlockClassName('klarna_payments/mark');
 
         /** @var Klarna_Payments_Block_Mark $mark */
         $mark = new $mark();

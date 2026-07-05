@@ -11,7 +11,7 @@
  * Klarna payment type template
  */
 
-/** @var $this Klarna_Payments_Block_Info_Payments */
+/** @var Klarna_Payments_Block_Info_Payments $this */
 ?>
 <p><img width="150" src="https://cdn.klarna.com/1.0/shared/image/generic/logo/<?php echo Mage::helper('klarna_payments')->getLocale(); ?>/basic/logo_black.png?width=300"
         alt="<?php echo $this->escapeHtml($this->getMethod()->getTitle()) ?>"/></p>
@@ -29,7 +29,7 @@
                 <th><strong><?php echo $this->escapeHtml($_label) ?>:</strong></th>
             </tr>
             <tr>
-                <td><?php echo nl2br(implode($this->getValueAsArray($_value, true), "\n")) ?></td>
+                <td><?php echo nl2br(implode("\n", $this->getValueAsArray($_value, true))) ?></td>
             </tr>
         <?php endforeach; ?>
         </tbody>

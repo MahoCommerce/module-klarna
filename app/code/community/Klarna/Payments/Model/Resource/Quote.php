@@ -15,7 +15,8 @@ class Klarna_Payments_Model_Resource_Quote extends Mage_Core_Model_Resource_Db_A
     /**
      * Init
      */
-    protected function _construct()
+    #[\Override]
+    protected function _construct(): void
     {
         $this->_init('klarna_payments/quote', 'payments_quote_id');
     }
@@ -27,10 +28,11 @@ class Klarna_Payments_Model_Resource_Quote extends Mage_Core_Model_Resource_Db_A
      * @param int                         $quoteId
      * @param string                      $paymentMethod
      *
-     * @return Mage_Sales_Model_Resource_Quote
+     * @return $this
      */
     public function loadActive($klarnaQuote, $quoteId, $paymentMethod = 'klarna_payments')
     {
+        /** @var Maho\Db\Adapter\AdapterInterface $adapter */
         $adapter = $this->_getReadAdapter();
         $select = $this->_getLoadSelect('quote_id', $quoteId, $klarnaQuote)
                        ->where('is_active = ?', 1)

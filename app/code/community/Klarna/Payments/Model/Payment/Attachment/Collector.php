@@ -36,7 +36,9 @@ class Klarna_Payments_Model_Payment_Attachment_Collector
         if (isset($options['store'])) {
             $this->_store = $options['store'];
         } else {
-            $this->_store = Mage::app()->getStore();
+            /** @var Mage_Core_Model_Store $store */
+            $store = Mage::app()->getStore();
+            $this->_store = $store;
         }
 
         $this->_initCollectors();
@@ -61,7 +63,9 @@ class Klarna_Payments_Model_Payment_Attachment_Collector
      */
     protected function _initCollectors()
     {
-        $attachmentConfig = Mage::getConfig()->getNode('klarna/attachments');
+        /** @var Mage_Core_Model_Config $config */
+        $config = Mage::getConfig();
+        $attachmentConfig = $config->getNode('klarna/attachments');
 
         if (!$attachmentConfig) {
             return $this;
@@ -81,15 +85,11 @@ class Klarna_Payments_Model_Payment_Attachment_Collector
     /**
      * Init model class by configuration
      *
-     * @param $class
-     *
-     * @param $totalCode
-     *
      * @return false|Klarna_Payments_Model_Payment_Attachment_Abstract
      *
      * @throws Mage_Core_Exception
      */
-    protected function _initModelInstance($class, $totalCode)
+    protected function _initModelInstance(string $class, string $totalCode)
     {
         $model = Mage::getModel($class);
         if (!$model instanceof Klarna_Payments_Model_Payment_Attachment_Abstract) {

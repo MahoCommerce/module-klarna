@@ -26,8 +26,10 @@ class Klarna_Core_Model_Api_Builder_Orderline_Surcharge extends Klarna_Core_Mode
     {
         $object = $checkout->getObject();
         $helper = Mage::helper('klarna_core');
+        /** @var Mage_Core_Model_Store $store */
+        $store = $object->getStore();
 
-        if (!$helper->getDisplayInSubtotalFPT($object->getStore())) {
+        if (!$helper->getDisplayInSubtotalFPT($store)) {
             return $this;
         }
 

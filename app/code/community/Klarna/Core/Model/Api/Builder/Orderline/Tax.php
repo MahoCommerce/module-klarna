@@ -26,12 +26,14 @@ class Klarna_Core_Model_Api_Builder_Orderline_Tax extends Klarna_Core_Model_Api_
     {
         $object = $checkout->getObject();
         $helper = Mage::helper('klarna_core');
+        /** @var Mage_Core_Model_Store $store */
+        $store = $object->getStore();
 
-        if (!$helper->getSeparateTaxLine($object->getStore())) {
+        if (!$helper->getSeparateTaxLine($store)) {
             return $this;
         }
 
-        if ($checkout->getObject() instanceof Mage_Sales_Model_Quote) {
+        if ($object instanceof Mage_Sales_Model_Quote) {
             $totalTax = $object->isVirtual() ? $object->getBillingAddress()->getBaseTaxAmount()
                 : $object->getShippingAddress()->getBaseTaxAmount();
         } else {

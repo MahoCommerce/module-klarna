@@ -22,7 +22,9 @@ class Klarna_Core_Model_System_Config_Source_Version
         $helper  = Mage::helper('klarna_core');
         $options = [];
 
-        if ($versions = $helper->getApiVersion()) {
+        /** @var array $versions */
+        $versions = $helper->getApiVersion();
+        if ($versions) {
             foreach ($versions as $version) {
                 $options[] = [
                     'label' => Mage::helper('klarna_core')->__($version->getLabel()),

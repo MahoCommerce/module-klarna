@@ -10,7 +10,7 @@
 /**
  * Klarna api integration abstract
  *
- * @method Klarna_Core_Model_Api_PurchaseAbstract setStore(Mage_Core_Model_Store $store)
+ * @method Klarna_Core_Model_Api_PurchaseAbstract setStore(?Mage_Core_Model_Store $store)
  * @method Mage_Core_Model_Store getStore()
  * @method Klarna_Core_Model_Api_PurchaseAbstract setConfig(Varien_Object $config)
  * @method Varien_Object getConfig()
@@ -26,6 +26,7 @@ class Klarna_Core_Model_Api_PurchaseAbstract extends Klarna_Core_Model_Api_ApiTy
      *
      * @return Varien_Object
      */
+    #[\Override]
     public function initKlarnaSession($sessionId = null, $createIfNotExists = false, $updateAllowed = false)
     {
         return new Klarna_Core_Model_Api_Response();
@@ -38,6 +39,7 @@ class Klarna_Core_Model_Api_PurchaseAbstract extends Klarna_Core_Model_Api_ApiTy
      *
      * @return Varien_Object
      */
+    #[\Override]
     public function createSession()
     {
         return $this->initKlarnaSession();
@@ -52,6 +54,7 @@ class Klarna_Core_Model_Api_PurchaseAbstract extends Klarna_Core_Model_Api_ApiTy
      *
      * @return Varien_Object
      */
+    #[\Override]
     public function updateSession($sessionId)
     {
         return $this->initKlarnaSession($sessionId, false, true);

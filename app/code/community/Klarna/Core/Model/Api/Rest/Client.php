@@ -108,11 +108,14 @@ class Klarna_Core_Model_Api_Rest_Client extends Varien_Object
      *
      * @return $this
      */
+    #[\Override]
     protected function _construct()
     {
-        $version     = Mage::getConfig()->getModuleConfig('Klarna_Core')->version;
+        /** @var Mage_Core_Model_Config $config */
+        $config      = Mage::getConfig();
+        $version     = $config->getModuleConfig('Klarna_Core')->version;
         $mageVersion = Mage::getVersion();
-        $mageEdition = Mage::getEdition();
+        $mageEdition = 'Community';
 
         $versionStringObject = new Varien_Object(
             [
@@ -350,7 +353,7 @@ class Klarna_Core_Model_Api_Rest_Client extends Varien_Object
                 $response = $this->_execute(self::REQUEST_METHOD_GET, $this->_resolveUrl($location), []);
             }
         } catch (Exception $e) {
-            $this->_debug($e, Mage::LOG_CRIT);
+            $this->_debug($e, Mage::LOG_CRITICAL);
             $code = $e->getCode();
 
             if (5 !== (int) floor((int) $code / 100)) {
@@ -472,7 +475,13 @@ class Klarna_Core_Model_Api_Rest_Client extends Varien_Object
      */
     public function getNewRequestObject()
     {
-        return Mage::getModel($this->_requestObject);
+        $request = Mage::getModel($this->_requestObject);
+
+        if (!$request instanceof Klarna_Core_Model_Api_Rest_Client_Request) {
+            throw new Klarna_Core_Model_Api_Exception('Cannot instantiate request object.');
+        }
+
+        return $request;
     }
 
     /**
@@ -555,7 +564,7 @@ class Klarna_Core_Model_Api_Rest_Client extends Varien_Object
      * @param mixed $message
      * @param mixed $level
      */
-    protected function _debug($message, $level)
+    protected function _debug($message, $level): void
     {
         if (Mage::LOG_DEBUG != $level || $this->getDebug()) {
             Mage::log($this->_rawDebugMessage($message), $level, $this->getLogFileName(), true);

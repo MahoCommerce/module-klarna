@@ -9,15 +9,15 @@
 
 class Klarna_Payments_Block_Mark extends Mage_Core_Block_Template
 {
-    protected $method_code;
+    protected string $method_code = '';
 
-    protected $title = '';
-    protected $logo = '';
+    protected string $title = '';
+    protected string $logo = '';
 
     /**
      * @param string $method_code
      */
-    public function setMethodCode($method_code)
+    public function setMethodCode($method_code): void
     {
         $this->method_code = $method_code;
     }
@@ -37,7 +37,7 @@ class Klarna_Payments_Block_Mark extends Mage_Core_Block_Template
      */
     public function getMethodCode()
     {
-        $this->method_code;
+        return $this->method_code;
     }
 
     /**

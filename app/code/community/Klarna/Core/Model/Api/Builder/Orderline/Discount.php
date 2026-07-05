@@ -25,12 +25,13 @@ class Klarna_Core_Model_Api_Builder_Orderline_Discount extends Klarna_Core_Model
     public function collect($checkout)
     {
         $object = $checkout->getObject();
+        /** @var Mage_Core_Model_Store $store */
         $store = $object->getStore();
         $totals = $object->getTotals();
         $helper = Mage::helper('klarna_core');
 
         if (is_array($totals) && isset($totals['discount'])) {
-            /** @var Mage_Sales_Model_Quote_Address_Total_Abstract $total */
+            /** @var Mage_Sales_Model_Quote_Address_Total $total */
             $total = $totals['discount'];
             $subtotal = $totals['subtotal'];
 
@@ -73,7 +74,7 @@ class Klarna_Core_Model_Api_Builder_Orderline_Discount extends Klarna_Core_Model
             $taxAmount = $object->getBaseHiddenTaxAmount();
             $amount    = -$object->getBaseDiscountAmount() - $taxAmount;
 
-            if ($helper->getSeparateTaxLine($object->getStore())) {
+            if ($helper->getSeparateTaxLine($store)) {
                 $unitPrice   = $amount;
                 $totalAmount = $amount;
                 $taxRate     = 0;

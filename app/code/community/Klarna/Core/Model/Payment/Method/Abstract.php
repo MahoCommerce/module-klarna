@@ -44,13 +44,14 @@ class Klarna_Core_Model_Payment_Method_Abstract extends Mage_Payment_Model_Metho
      * if flag isInitializeNeeded set to true
      *
      * @param string $paymentAction
-     * @param object $stateObject
+     * @param Varien_Object $stateObject
      *
      * @return $this
      */
     #[\Override]
     public function initialize($paymentAction, $stateObject)
     {
+        /** @var Mage_Sales_Model_Order_Payment $payment */
         $payment = $this->getInfoInstance();
         $order   = $payment->getOrder();
         $store   = $order->getStore();
@@ -293,7 +294,7 @@ class Klarna_Core_Model_Payment_Method_Abstract extends Mage_Payment_Model_Metho
     /**
      * Get a Klarna order
      *
-     * @param $order
+     * @param Mage_Sales_Model_Order $order
      *
      * @return Klarna_Core_Model_Order
      */

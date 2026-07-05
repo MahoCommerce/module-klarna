@@ -20,6 +20,7 @@ class Klarna_Core_NotificationController extends Mage_Core_Controller_Front_Acti
     /**
      * Controller construct
      */
+    #[\Override]
     protected function _construct()
     {
         $this->_helper = Mage::helper('klarna_core');
@@ -30,14 +31,14 @@ class Klarna_Core_NotificationController extends Mage_Core_Controller_Front_Acti
      */
     #[\Maho\Config\Route('/klarna/notification', name: 'klarna.notification')]
     #[\Maho\Config\Route('/klarna/notification/index', name: 'klarna.notification.index')]
-    public function indexAction()
+    public function indexAction(): void
     {
         if (!$this->getRequest()->isPost()) {
             return;
         }
 
         try {
-            $body = new Varien_Object(Mage::helper('core')->jsonDecode($this->getRequest()->getRawBody()));
+            $body = new Varien_Object(Mage::helper('core')->jsonDecode((string) $this->getRequest()->getRawBody()));
         } catch (Exception $e) {
             $this->_sendBadRequestResponse();
 
@@ -133,7 +134,7 @@ class Klarna_Core_NotificationController extends Mage_Core_Controller_Front_Acti
      * API call to notify Magento that the order is now ready to receive order management calls
      */
     #[\Maho\Config\Route('/klarna/notification/push', name: 'klarna.notification.push')]
-    public function pushAction()
+    public function pushAction(): void
     {
         if (!$this->getRequest()->isPost()) {
             return;
@@ -187,7 +188,7 @@ class Klarna_Core_NotificationController extends Mage_Core_Controller_Front_Acti
                     ],
                 );
 
-                if (Mage_Sales_Model_Order::STATE_PROCESSING == $order->getState()) {
+                if (Mage_Sales_Model_Order::STATE_PROCESSING == $order->getData('state')) {
                     $order->addStatusHistoryComment(
                         $this->_helper->__('Order processed by Klarna.'),
                         $statusObject->getStatus(),
@@ -314,7 +315,7 @@ class Klarna_Core_NotificationController extends Mage_Core_Controller_Front_Acti
      *
      * @param array|string|null $message
      */
-    protected function _sendBadRequestResponse($message = null)
+    protected function _sendBadRequestResponse($message = null): void
     {
         if (null === $message) {
             $message = $this->_helper->__('Bad request');

@@ -12,7 +12,7 @@
  */
 ?>
 <?php if (Mage::getStoreConfigFlag('payment/' . $this->getMethodCode() . '/active')): ?>
-    <?php $payment = Mage::getSingleton('checkout/session')->getquote()->getPayment(); ?>
+    <?php $payment = Mage::getSingleton('checkout/session')->getQuote()->getPayment(); ?>
     <?php $subType = Mage::getSingleton('checkout/session')->getKlarnaPaymentsSelected(); ?>
     <script type="text/javascript">
         function Klarna<?php echo $this->getFunctionName(); ?>Init() {

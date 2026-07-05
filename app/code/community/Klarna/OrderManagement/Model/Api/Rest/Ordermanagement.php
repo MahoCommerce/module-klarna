@@ -17,7 +17,7 @@ class Klarna_OrderManagement_Model_Api_Rest_Ordermanagement extends Klarna_Core_
      *
      * Merchants will receive the order confirmation push until the order has been acknowledged.
      *
-     * @param $id
+     * @param string $id
      *
      * @return Klarna_Core_Model_Api_Rest_Client_Response
      */
@@ -36,13 +36,16 @@ class Klarna_OrderManagement_Model_Api_Rest_Ordermanagement extends Klarna_Core_
             ->setMethod(Klarna_Core_Model_Api_Rest_Client::REQUEST_METHOD_POST)
             ->setDefaultErrorMessage('Error: Unable to acknowledge order.');
 
-        return $this->request($request);
+        /** @var Klarna_Core_Model_Api_Rest_Client_Response $response */
+        $response = $this->request($request);
+
+        return $response;
     }
 
     /**
      * Get the current state of an order
      *
-     * @param $id
+     * @param string $id
      *
      * @return Klarna_Core_Model_Api_Rest_Client_Response
      */
@@ -60,7 +63,10 @@ class Klarna_OrderManagement_Model_Api_Rest_Ordermanagement extends Klarna_Core_
             ->setIdField('order_id')
             ->setDefaultErrorMessage('Error: Order not found.');
 
-        return $this->request($request);
+        /** @var Klarna_Core_Model_Api_Rest_Client_Response $response */
+        $response = $this->request($request);
+
+        return $response;
     }
 
     /**
@@ -92,13 +98,16 @@ class Klarna_OrderManagement_Model_Api_Rest_Ordermanagement extends Klarna_Core_
             ->setParams($data)
             ->setDefaultErrorMessage('Error: Unable to acknowledge order.');
 
-        return $this->request($request);
+        /** @var Klarna_Core_Model_Api_Rest_Client_Response $response */
+        $response = $this->request($request);
+
+        return $response;
     }
 
     /**
      * Extend the order's authorization by default period according to merchant contract.
      *
-     * @param $id
+     * @param string $id
      *
      * @return \Klarna_Core_Model_Api_Rest_Client_Response
      */
@@ -117,7 +126,10 @@ class Klarna_OrderManagement_Model_Api_Rest_Ordermanagement extends Klarna_Core_
             ->setMethod(Klarna_Core_Model_Api_Rest_Client::REQUEST_METHOD_POST)
             ->setDefaultErrorMessage('Error: Unable to extend order authorization.');
 
-        return $this->request($request);
+        /** @var Klarna_Core_Model_Api_Rest_Client_Response $response */
+        $response = $this->request($request);
+
+        return $response;
     }
 
     /**
@@ -161,7 +173,10 @@ class Klarna_OrderManagement_Model_Api_Rest_Ordermanagement extends Klarna_Core_
             ->setParams($data)
             ->setDefaultErrorMessage('Error: Unable to update merchant references order.');
 
-        return $this->request($request);
+        /** @var Klarna_Core_Model_Api_Rest_Client_Response $response */
+        $response = $this->request($request);
+
+        return $response;
     }
 
     /**
@@ -191,14 +206,17 @@ class Klarna_OrderManagement_Model_Api_Rest_Ordermanagement extends Klarna_Core_
             ->setParams($data)
             ->setDefaultErrorMessage('Error: Unable to acknowledge order.');
 
-        return $this->request($request);
+        /** @var Klarna_Core_Model_Api_Rest_Client_Response $response */
+        $response = $this->request($request);
+
+        return $response;
     }
 
     /**
      * Cancel an authorized order. For a cancellation to be successful, there must be no captures on the order.
      * The authorized amount will be released and no further updates to the order will be allowed.
      *
-     * @param $id
+     * @param string $id
      *
      * @return Klarna_Core_Model_Api_Rest_Client_Response
      */
@@ -217,7 +235,10 @@ class Klarna_OrderManagement_Model_Api_Rest_Ordermanagement extends Klarna_Core_
             ->setMethod(Klarna_Core_Model_Api_Rest_Client::REQUEST_METHOD_POST)
             ->setDefaultErrorMessage('Error: Unable to cancel order.');
 
-        return $this->request($request);
+        /** @var Klarna_Core_Model_Api_Rest_Client_Response $response */
+        $response = $this->request($request);
+
+        return $response;
     }
 
     /**
@@ -228,8 +249,8 @@ class Klarna_OrderManagement_Model_Api_Rest_Ordermanagement extends Klarna_Core_
      * capture. The capture amount can optionally be accompanied by a descriptive text and order lines for the captured
      * items.
      *
-     * @param $id
-     * @param $data
+     * @param string $id
+     * @param array $data
      *
      * @return Klarna_Core_Model_Api_Rest_Client_Response
      */
@@ -249,14 +270,17 @@ class Klarna_OrderManagement_Model_Api_Rest_Ordermanagement extends Klarna_Core_
             ->setParams($data)
             ->setDefaultErrorMessage('Error: Unable to capture order.');
 
-        return $this->request($request);
+        /** @var Klarna_Core_Model_Api_Rest_Client_Response $response */
+        $response = $this->request($request);
+
+        return $response;
     }
 
     /**
      * Retrieve a capture
      *
-     * @param $id
-     * @param $captureId
+     * @param string $id
+     * @param string $captureId
      *
      * @return Klarna_Core_Model_Api_Rest_Client_Response
      */
@@ -275,15 +299,18 @@ class Klarna_OrderManagement_Model_Api_Rest_Ordermanagement extends Klarna_Core_
             ->setUrl($url)
             ->setDefaultErrorMessage('Error: Unable to get capture.');
 
-        return $this->request($request);
+        /** @var Klarna_Core_Model_Api_Rest_Client_Response $response */
+        $response = $this->request($request);
+
+        return $response;
     }
 
     /**
      * Appends new shipping info to a capture.
      *
-     * @param $id
-     * @param $captureId
-     * @param $data
+     * @param string $id
+     * @param string $captureId
+     * @param array $data
      *
      * @return Klarna_Core_Model_Api_Rest_Client_Response
      */
@@ -305,7 +332,10 @@ class Klarna_OrderManagement_Model_Api_Rest_Ordermanagement extends Klarna_Core_
             ->setParams($data)
             ->setDefaultErrorMessage('Error: Unable to add shipping detail to capture.');
 
-        return $this->request($request);
+        /** @var Klarna_Core_Model_Api_Rest_Client_Response $response */
+        $response = $this->request($request);
+
+        return $response;
     }
 
     /**
@@ -314,9 +344,9 @@ class Klarna_OrderManagement_Model_Api_Rest_Ordermanagement extends Klarna_Core_
      *
      * Mandatory fields can not be cleared,
      *
-     * @param $id
-     * @param $captureId
-     * @param $data
+     * @param string $id
+     * @param string $captureId
+     * @param array $data
      *
      * @return Klarna_Core_Model_Api_Rest_Client_Response
      */
@@ -338,14 +368,17 @@ class Klarna_OrderManagement_Model_Api_Rest_Ordermanagement extends Klarna_Core_
             ->setParams($data)
             ->setDefaultErrorMessage('Error: Unable to update order address.');
 
-        return $this->request($request);
+        /** @var Klarna_Core_Model_Api_Rest_Client_Response $response */
+        $response = $this->request($request);
+
+        return $response;
     }
 
     /**
      * Trigger a new send out of customer communication., typically a new invoice, for a capture.
      *
-     * @param $id
-     * @param $captureId
+     * @param string $id
+     * @param string $captureId
      *
      * @return Klarna_Core_Model_Api_Rest_Client_Response
      */
@@ -366,7 +399,10 @@ class Klarna_OrderManagement_Model_Api_Rest_Ordermanagement extends Klarna_Core_
             ->setMethod(Klarna_Core_Model_Api_Rest_Client::REQUEST_METHOD_POST)
             ->setDefaultErrorMessage('Error: Unable to trigger order send out.');
 
-        return $this->request($request);
+        /** @var Klarna_Core_Model_Api_Rest_Client_Response $response */
+        $response = $this->request($request);
+
+        return $response;
     }
 
     /**
@@ -374,8 +410,8 @@ class Klarna_OrderManagement_Model_Api_Rest_Ordermanagement extends Klarna_Core_
      * The refunded amount must not be higher than 'captured_amount'.
      * The refunded amount can optionally be accompanied by a descriptive text and order lines.
      *
-     * @param $id
-     * @param $data
+     * @param string $id
+     * @param array $data
      *
      * @return Klarna_Core_Model_Api_Rest_Client_Response
      */
@@ -395,13 +431,16 @@ class Klarna_OrderManagement_Model_Api_Rest_Ordermanagement extends Klarna_Core_
             ->setParams($data)
             ->setDefaultErrorMessage('Error: Unable to issue order refund.');
 
-        return $this->request($request);
+        /** @var Klarna_Core_Model_Api_Rest_Client_Response $response */
+        $response = $this->request($request);
+
+        return $response;
     }
 
     /**
      * Signal that there is no intention to perform further captures.
      *
-     * @param $id
+     * @param string $id
      *
      * @return Klarna_Core_Model_Api_Rest_Client_Response
      */
@@ -420,6 +459,9 @@ class Klarna_OrderManagement_Model_Api_Rest_Ordermanagement extends Klarna_Core_
             ->setMethod(Klarna_Core_Model_Api_Rest_Client::REQUEST_METHOD_POST)
             ->setDefaultErrorMessage('Error: Unable to acknowledge order.');
 
-        return $this->request($request);
+        /** @var Klarna_Core_Model_Api_Rest_Client_Response $response */
+        $response = $this->request($request);
+
+        return $response;
     }
 }

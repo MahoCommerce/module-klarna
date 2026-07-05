@@ -10,7 +10,7 @@
 /**
  * Abstract class for rest resource integration
  *
- * @method Klarna_Core_Model_Api_Rest_Client_Abstract setStore(Mage_Core_Model_Store $store)
+ * @method Klarna_Core_Model_Api_Rest_Client_Abstract setStore(?Mage_Core_Model_Store $store)
  * @method Klarna_Core_Model_Api_Rest_Client_Abstract setConfig(Varien_Object $config)
  * @method Varien_Object getConfig()
  */

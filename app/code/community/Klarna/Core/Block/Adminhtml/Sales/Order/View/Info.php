@@ -19,7 +19,8 @@ class Klarna_Core_Block_Adminhtml_Sales_Order_View_Info extends Mage_Adminhtml_B
     #[\Override]
     public function getAddressEditLink($address, $label = '')
     {
-        if ($address->getOrder()->getPayment()->getMethod() == 'klarna_payments') {
+        $payment = $address->getOrder()->getPayment();
+        if ($payment && $payment->getMethod() == 'klarna_payments') {
             return '';
         }
 

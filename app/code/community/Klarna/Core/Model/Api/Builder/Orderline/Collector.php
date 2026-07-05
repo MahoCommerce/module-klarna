@@ -36,7 +36,9 @@ class Klarna_Core_Model_Api_Builder_Orderline_Collector
         if (isset($options['store'])) {
             $this->_store = $options['store'];
         } else {
-            $this->_store = Mage::app()->getStore();
+            /** @var Mage_Core_Model_Store $store */
+            $store = Mage::app()->getStore();
+            $this->_store = $store;
         }
 
         $this->_initCollectors();
@@ -60,7 +62,9 @@ class Klarna_Core_Model_Api_Builder_Orderline_Collector
     protected function _initCollectors()
     {
         $checkoutType = Mage::helper('klarna_core')->getStoreApiTypeCode($this->_store);
-        $totalsConfig = Mage::getConfig()->getNode(sprintf('klarna/order_lines/%s', $checkoutType));
+        /** @var Mage_Core_Model_Config $config */
+        $config = Mage::getConfig();
+        $totalsConfig = $config->getNode(sprintf('klarna/order_lines/%s', $checkoutType));
 
         if (!$totalsConfig) {
             return $this;

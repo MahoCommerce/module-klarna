@@ -120,7 +120,7 @@ class Klarna_Payments_Block_Info_Payments extends Mage_Payment_Block_Info
         $name = $checkoutSession->getData($this->getMethod()->getCode() . '_selected');
 
         if (is_null($name)) {
-            return $this->escapeHtml($this->getMethod()->getTitle());
+            return (string) $this->escapeHtml($this->getMethod()->getTitle());
         }
 
         /** @var Klarna_Payments_Model_Quote $klarnaQuote */
@@ -129,7 +129,7 @@ class Klarna_Payments_Block_Info_Payments extends Mage_Payment_Block_Info
 
         foreach ($paymentMethodCategories as $methodCategory) {
             if ($methodCategory['identifier'] == $name) {
-                return $this->escapeHtml($methodCategory['name']);
+                return (string) $this->escapeHtml((string) $methodCategory['name']);
             }
         }
 
@@ -139,10 +139,9 @@ class Klarna_Payments_Block_Info_Payments extends Mage_Payment_Block_Info
     /**
      * Check if string is a url
      *
-     * @param $string
      * @return bool
      */
-    public function isStringUrl($string)
+    public function isStringUrl(mixed $string)
     {
         return (bool) filter_var($string, FILTER_VALIDATE_URL);
     }

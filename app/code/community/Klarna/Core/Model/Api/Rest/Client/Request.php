@@ -68,6 +68,7 @@ class Klarna_Core_Model_Api_Rest_Client_Request extends Varien_Object
     /**
      * Build the default values for the object
      */
+    #[\Override]
     protected function _construct()
     {
         $this->setData(
@@ -91,7 +92,7 @@ class Klarna_Core_Model_Api_Rest_Client_Request extends Varien_Object
      * Currently, the API does not return results for IDs that do not exist. This allows error checking to see if a
      * a response for a ID was not returned.
      *
-     * @param $id
+     * @param mixed $id
      *
      * @return $this
      */
@@ -166,17 +167,12 @@ class Klarna_Core_Model_Api_Rest_Client_Request extends Varien_Object
         switch ($format) {
             case self::REQUEST_PARAMS_FORMAT_TYPE_JSON:
                 return json_encode($data);
-
-                break;
             case self::REQUEST_PARAMS_FORMAT_TYPE_ARRAY:
             default:
                 if (is_array($data)) {
                     return $data;
                 }
-                if (null !== $data) {
-                    return [$data];
-                }
-                return [];
+                return [$data];
         }
     }
 

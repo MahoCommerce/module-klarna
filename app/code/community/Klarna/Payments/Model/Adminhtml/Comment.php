@@ -20,7 +20,11 @@ class Klarna_Payments_Model_Adminhtml_Comment
     public function getCommentText()
     {
         $module = 'kp';
-        $moduleVersion = Mage::getConfig()->getNode()->modules->Klarna_Payments->version;
+        /** @var Mage_Core_Model_Config $config */
+        $config = Mage::getConfig();
+        /** @var Mage_Core_Model_Config_Element $configNode */
+        $configNode = $config->getNode();
+        $moduleVersion = $configNode->modules->Klarna_Payments->version;
 
         $platform = 'magento';
         $platformVersion = Mage::getVersion();

@@ -25,6 +25,9 @@ class Klarna_Payments_Block_Payments extends Mage_Core_Block_Template
         parent::_construct();
     }
 
+    /**
+     * @return string|false
+     */
     public function getRegionsUS()
     {
         $lookupTable = [];
@@ -99,12 +102,12 @@ class Klarna_Payments_Block_Payments extends Mage_Core_Block_Template
         return Mage::getStoreConfigFlag('payment/klarna_payments/pre_screen');
     }
 
-    public function getFunctionName()
+    public function getFunctionName(): string
     {
         return 'Payments';
     }
 
-    public function getMethodCode()
+    public function getMethodCode(): string
     {
         return 'klarna_payments';
     }

@@ -75,7 +75,9 @@ class Klarna_OrderManagement_Model_Api_Kasper_PostPurchase extends Klarna_Core_M
          * Get items for capture
          */
         if ($invoice instanceof Mage_Sales_Model_Order_Invoice) {
-            $paymentMethod = $invoice->getOrder()->getPayment()->getMethod();
+            /** @var Mage_Sales_Model_Order_Payment $payment */
+            $payment = $invoice->getOrder()->getPayment();
+            $paymentMethod = $payment->getMethod();
             $orderItems    = $this->getHelper()
                 ->getPurchaseApiInstance($paymentMethod, $invoice->getStore())
                 ->getGenerator()
@@ -133,7 +135,7 @@ class Klarna_OrderManagement_Model_Api_Kasper_PostPurchase extends Klarna_Core_M
         if ($response->getIsSuccessful()) {
             $captureId = $response->getResponseObject()->getHeader('Capture-id')
                 ?: $this->_getOrderManagementApi()->getLocationResourceId(
-                    $response->getResponseObject()->getHeader('Location'),
+                    (string) $response->getResponseObject()->getHeader('Location'),
                 );
 
             if ($captureId) {
@@ -165,22 +167,22 @@ class Klarna_OrderManagement_Model_Api_Kasper_PostPurchase extends Klarna_Core_M
     /**
      * Add shipping info to capture
      *
-     * @param $captureId
-     * @param $klarnaOrderId
-     * @param $trackingData
-     * @param $invoice
+     * @param string                         $captureId
+     * @param string                         $klarnaOrderId
+     * @param array                          $trackingData
+     * @param Mage_Sales_Model_Order_Invoice $invoice
      */
-    private function addShippingInfo($captureId, $klarnaOrderId, $trackingData, $invoice)
+    private function addShippingInfo($captureId, $klarnaOrderId, $trackingData, ?Mage_Sales_Model_Order_Invoice $invoice): void
     {
         $data = $this->prepareShippingInfo($trackingData);
         $response =  $this->_getOrderManagementApi()->addShippingDetailsToCapture($klarnaOrderId, $captureId, $data);
 
         if (!$response->getIsSuccessful()) {
             foreach ($response->getErrorMessages() as $message) {
-                $invoice->addComment($message, false, false);
+                $invoice?->addComment($message, false, false);
             }
         } else {
-            $invoice->addComment('Shipping info sent to Klarna API', false, false);
+            $invoice?->addComment('Shipping info sent to Klarna API', false, false);
         }
     }
 
@@ -234,7 +236,9 @@ class Klarna_OrderManagement_Model_Api_Kasper_PostPurchase extends Klarna_Core_M
          * Get items for refund
          */
         if ($creditMemo instanceof Mage_Sales_Model_Order_Creditmemo) {
-            $paymentMethod = $creditMemo->getOrder()->getPayment()->getMethod();
+            /** @var Mage_Sales_Model_Order_Payment $payment */
+            $payment = $creditMemo->getOrder()->getPayment();
+            $paymentMethod = $payment->getMethod();
             $orderItems    = $this->getHelper()
                 ->getPurchaseApiInstance($paymentMethod, $creditMemo->getStore())
                 ->getGenerator()

@@ -29,10 +29,19 @@ class Klarna_Core_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * Cache variables
      */
+    /** @var array|null */
     protected $_cacheApiTypes;
+
+    /** @var array|null */
     protected $_cacheApiVersions;
+
+    /** @var array|null */
     protected $_cachePurchaseApiTypes;
+
+    /** @var array|null */
     protected $_cachePostPurchaseApiTypes;
+
+    /** @var array */
     protected $_cacheStoreApiVersion = [];
 
     /**
@@ -87,7 +96,7 @@ class Klarna_Core_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * Determine if product price excludes VAT or not
      *
-     * @param Store  $store
+     * @param Mage_Core_Model_Store $store
      * @return bool
      */
     public function getPriceExcludesVat($store = null)
@@ -98,7 +107,7 @@ class Klarna_Core_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * Determine if tax is applied before or after discount
      *
-     * @param Store  $store
+     * @param Mage_Core_Model_Store $store
      * @return bool
      */
     public function getTaxBeforeDiscount($store = null)
@@ -131,9 +140,10 @@ class Klarna_Core_Helper_Data extends Mage_Core_Helper_Abstract
         $version = Mage::getStoreConfig('klarna/api/api_version', $store);
 
         if (null === $version) {
-            $store = Mage::app()->getStore($store);
+            /** @var Mage_Core_Model_Store $storeModel */
+            $storeModel = Mage::app()->getStore($store);
 
-            throw new Klarna_Core_Exception(sprintf('Api version not set for store %s', $store->getFrontendName()));
+            throw new Klarna_Core_Exception(sprintf('Api version not set for store %s', $storeModel->getFrontendName()));
         }
 
         if (!isset($this->_cacheStoreApiVersion[$version])) {
@@ -177,7 +187,7 @@ class Klarna_Core_Helper_Data extends Mage_Core_Helper_Abstract
         $postPurchaseApiType = $this->getPostPurchaseApiType($code);
         $instance            = Mage::getSingleton($postPurchaseApiType->getClass());
 
-        if (!$instance) {
+        if (!$instance instanceof Klarna_Core_Model_Api_PostPurchaseAbstract) {
             throw new Klarna_Core_Model_Api_Exception(sprintf('Cannot initiate api type "%s"!', $postPurchaseApiType->getClass()));
         }
 
@@ -215,7 +225,7 @@ class Klarna_Core_Helper_Data extends Mage_Core_Helper_Abstract
         $purchaseApiType = $this->getPurchaseApiType($paymentMethodCode);
         $instance        = Mage::getSingleton($purchaseApiType->getClass());
 
-        if (!$instance) {
+        if (!$instance instanceof Klarna_Core_Model_Api_PurchaseAbstract) {
             throw new Klarna_Core_Model_Api_Exception(sprintf('Cannot initiate api type "%s"!', $purchaseApiType->getClass()));
         }
 
@@ -269,7 +279,7 @@ class Klarna_Core_Helper_Data extends Mage_Core_Helper_Abstract
      *
      * @param string|null $code
      *
-     * @return Varien_Object
+     * @return Varien_Object|array
      * @throws Klarna_Core_Model_Api_Exception
      */
     public function getApiVersion($code = null)
@@ -280,6 +290,7 @@ class Klarna_Core_Helper_Data extends Mage_Core_Helper_Abstract
             foreach ($versions as &$configObject) {
                 $options = $configObject->hasOptions() ? $configObject->getOptions() : [];
 
+                /** @var Varien_Object $apiTypeObject */
                 $apiTypeObject  = $this->getApiType($configObject->getType());
                 $apiTypeOptions = $apiTypeObject->hasOptions() ? $apiTypeObject->getOptions() : [];
 
@@ -367,7 +378,7 @@ class Klarna_Core_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * Get an xml path as an array of Varien_Objects
      *
-     * @param $xpath
+     * @param string $xpath
      *
      * @return array
      */
@@ -375,7 +386,9 @@ class Klarna_Core_Helper_Data extends Mage_Core_Helper_Abstract
     {
         $array = [];
 
-        if ($typeConfig = Mage::getConfig()->getNode($xpath)) {
+        /** @var Mage_Core_Model_Config $config */
+        $config = Mage::getConfig();
+        if ($typeConfig = $config->getNode($xpath)) {
             foreach ($typeConfig->children() as $code => $details) {
                 $config = $details->asArray();
                 unset($config['@']);
@@ -396,6 +409,6 @@ class Klarna_Core_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function toApiFloat($float)
     {
-        return round($float * 100);
+        return (int) round($float * 100);
     }
 }

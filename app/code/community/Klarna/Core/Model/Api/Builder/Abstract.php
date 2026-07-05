@@ -44,7 +44,7 @@
 class Klarna_Core_Model_Api_Builder_Abstract extends Varien_Object
 {
     /**
-     * @var Klarna_Core_Model_Api_Builder_Orderline_Collector
+     * @var Klarna_Core_Model_Api_Builder_Orderline_Collector|null
      */
     protected $_orderLineCollector = null;
 
@@ -82,6 +82,7 @@ class Klarna_Core_Model_Api_Builder_Abstract extends Varien_Object
     /**
      * Init
      */
+    #[\Override]
     protected function _construct()
     {
         $this->_helper = Mage::helper('klarna_core');
@@ -344,7 +345,7 @@ class Klarna_Core_Model_Api_Builder_Abstract extends Varien_Object
     {
         if (!$quote->getCustomerIsGuest() && $quote->getCustomerDob()) {
             return [
-                'date_of_birth' => date('Y-m-d', strtotime($quote->getCustomerDob())),
+                'date_of_birth' => date('Y-m-d', (int) strtotime($quote->getCustomerDob())),
             ];
         }
 
@@ -364,13 +365,13 @@ class Klarna_Core_Model_Api_Builder_Abstract extends Varien_Object
             return Mage::helper('core')->getDefaultCountry($store);
         }
 
-        return Mage::getStoreConfig(Mage_Core_Model_Locale::XML_PATH_DEFAULT_COUNTRY, $store);
+        return Mage::getStoreConfig(Mage_Core_Helper_Data::XML_PATH_DEFAULT_COUNTRY, $store);
     }
 
     /**
      * check if address is valid
      *
-     * @param $address
+     * @param Mage_Customer_Model_Address_Abstract $address
      *
      * @return bool
      */

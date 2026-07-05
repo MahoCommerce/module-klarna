@@ -16,6 +16,7 @@ class Klarna_Payments_Model_Resource_Quote_Collection extends Mage_Core_Model_Re
     /**
      * Init
      */
+    #[\Override]
     protected function _construct()
     {
         $this->_init('klarna_payments/quote');

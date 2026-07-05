@@ -16,7 +16,7 @@ class Klarna_Core_Model_Observer
      * Generate item list for payment capture
      */
     #[\Maho\Config\Observer('sales_order_payment_capture', type: 'singleton', id: 'klarna_prepare_capture')]
-    public function prepareCapture(Varien_Event_Observer $observer)
+    public function prepareCapture(Varien_Event_Observer $observer): void
     {
         /** @var Mage_Sales_Model_Order_Payment $payment */
         $payment = $observer->getPayment();

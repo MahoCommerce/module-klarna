@@ -12,7 +12,7 @@
  */
 class Klarna_Payments_Model_Filter
 {
-    protected $logo = '';
+    protected string $logo = '';
 
     /**
      * Filter string to replace template tags with values
@@ -39,7 +39,7 @@ class Klarna_Payments_Model_Filter
         return $value;
     }
 
-    public function setLogo($logo)
+    public function setLogo(string $logo): self
     {
         $this->logo = $logo;
         return $this;

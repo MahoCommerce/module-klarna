@@ -16,6 +16,7 @@ class Klarna_Core_Model_Resource_Order_Collection extends Mage_Core_Model_Resour
     /**
      * Init
      */
+    #[\Override]
     protected function _construct()
     {
         $this->_init('klarna_core/order');

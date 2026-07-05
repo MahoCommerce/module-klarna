@@ -57,9 +57,7 @@ class Klarna_Core_Model_Api_Rest_Client_Response extends Klarna_Core_Model_Api_R
                 'is_successful' => false,
             ];
 
-            if (null !== $idField) {
-                $_response[$idField] = $id ?: null;
-            }
+            $_response[$idField] = $id ?: null;
 
             $response = array_merge($response, $_response);
         }

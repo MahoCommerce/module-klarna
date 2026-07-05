@@ -29,7 +29,7 @@ class Klarna_Payments_Model_Payment_Payments extends Klarna_Core_Model_Payment_M
     protected $_canVoid                   = true;
     protected $_canUseInternal            = false;
     protected $_canUseCheckout            = true;
-    protected $_canUseForMultishipping    = false;
+    protected bool $_canUseForMultishipping = false;
     protected $_canFetchTransactionInfo   = true;
     protected $_canCreateBillingAgreement = false;
     protected $_canReviewPayment          = false;
@@ -55,7 +55,7 @@ class Klarna_Payments_Model_Payment_Payments extends Klarna_Core_Model_Payment_M
      */
     protected $_klarnaQuote = null;
 
-    public function setCode($code)
+    public function setCode(string $code): self
     {
         $this->_code = $code;
         return $this;
@@ -71,13 +71,13 @@ class Klarna_Payments_Model_Payment_Payments extends Klarna_Core_Model_Payment_M
         return $this;
     }
 
-    public function setCategoryInformation(array $information)
+    public function setCategoryInformation(array $information): self
     {
         $this->_categoryInformation = $information;
         return $this;
     }
 
-    public function getCategoryInformation()
+    public function getCategoryInformation(): array
     {
         return $this->_categoryInformation;
     }
@@ -199,9 +199,11 @@ class Klarna_Payments_Model_Payment_Payments extends Klarna_Core_Model_Payment_M
     public function authorize(Varien_Object $payment, $amount)
     {
         $klarnaQuote = $this->_getKlarnaQuote($payment->getOrder()->getQuote());
-        $result      = $this->getPurchaseApi()->placeOrder(
+        /** @var Klarna_Payments_Model_Api_Kasper_Purchase $purchaseApi */
+        $purchaseApi = $this->getPurchaseApi();
+        $result      = $purchaseApi->placeOrder(
             $klarnaQuote->getAuthorizationToken(),
-            $this->getPurchaseApi()->getGeneratedPlaceRequest(),
+            $purchaseApi->getGeneratedPlaceRequest(),
         );
 
         if ($result->getIsSuccessful()) {

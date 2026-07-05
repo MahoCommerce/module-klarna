@@ -23,7 +23,7 @@ class Klarna_Payments_Model_Api_Builder_Kasper extends Klarna_Core_Model_Api_Bui
     protected $_paymentsHelper = null;
 
     /**
-     * @var null
+     * @var Klarna_Payments_Model_Payment_Attachment_Collector|null
      */
     protected $_attachmentDataCollector = null;
 
@@ -86,6 +86,7 @@ class Klarna_Payments_Model_Api_Builder_Kasper extends Klarna_Core_Model_Api_Bui
 
         /** @var Mage_Sales_Model_Quote_Address $billingAddress */
         $billingAddress = $quote->getBillingAddress();
+        /** @phpstan-ignore argument.type (parent getDefaultCountry() @param null is inaccurate; a store is valid at runtime) */
         $country = $this->getDefaultCountry($store);
         if (!is_null($billingAddress)) {
             $billingCountry = $billingAddress->getCountry();
@@ -186,7 +187,7 @@ class Klarna_Payments_Model_Api_Builder_Kasper extends Klarna_Core_Model_Api_Bui
         }
 
         $total = 0;
-        foreach ($create['order_lines'] as $orderLine) {
+        foreach ($create['order_lines'] ?? [] as $orderLine) {
             $total += $orderLine['total_amount'];
         }
 
@@ -304,11 +305,11 @@ class Klarna_Payments_Model_Api_Builder_Kasper extends Klarna_Core_Model_Api_Bui
         }
 
         $total = 0;
-        foreach ($create['order_lines'] as $orderLine) {
+        foreach ($create['order_lines'] ?? [] as $orderLine) {
             $total += $orderLine['total_amount'];
         }
 
-        if ($total != $create['order_amount']) {
+        if ($total != ($create['order_amount'] ?? 0)) {
             Mage::throwException('Order line totals do not total order_amount');
         }
 
@@ -343,7 +344,7 @@ class Klarna_Payments_Model_Api_Builder_Kasper extends Klarna_Core_Model_Api_Bui
     {
         $customerData = [];
         if ($quote->getCustomerDob()) {
-            $customerData['date_of_birth'] = date('Y-m-d', strtotime($quote->getCustomerDob()));
+            $customerData['date_of_birth'] = date('Y-m-d', (int) strtotime((string) $quote->getCustomerDob()));
         }
 
         $dobFromOsc = $this->extractDOBFromRequest();
@@ -371,7 +372,7 @@ class Klarna_Payments_Model_Api_Builder_Kasper extends Klarna_Core_Model_Api_Bui
     /**
      * Get dob from post data for osc checkout
      *
-     * @return bool|null|string
+     * @return bool|string
      */
     private function extractDOBFromRequest()
     {
@@ -379,7 +380,7 @@ class Klarna_Payments_Model_Api_Builder_Kasper extends Klarna_Core_Model_Api_Bui
         if ($requestData) {
             if (!empty($requestData['day']) && !empty($requestData['month']) && !empty($requestData['year'])) {
                 $date = $requestData['year'] . '-' . $requestData['month'] . '-' . $requestData['day'];
-                return date('Y-m-d', strtotime($date));
+                return date('Y-m-d', (int) strtotime($date));
             }
         }
         return false;
@@ -406,15 +407,17 @@ class Klarna_Payments_Model_Api_Builder_Kasper extends Klarna_Core_Model_Api_Bui
     /**
      * Get attachment collector model
      *
-     * @return Mage_Core_Model_Abstract|null
+     * @return Klarna_Payments_Model_Payment_Attachment_Collector
      */
     public function getAttachmentDataCollector()
     {
         if (null === $this->_attachmentDataCollector) {
-            $this->_attachmentDataCollector = Mage::getSingleton(
+            /** @var Klarna_Payments_Model_Payment_Attachment_Collector $collector */
+            $collector = Mage::getSingleton(
                 'klarna_payments/payment_attachment_collector',
                 ['store' => $this->getObject()->getStore()],
             );
+            $this->_attachmentDataCollector = $collector;
         }
         return $this->_attachmentDataCollector;
     }

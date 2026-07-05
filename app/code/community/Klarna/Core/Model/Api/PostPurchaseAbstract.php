@@ -11,7 +11,7 @@ declare(strict_types=1);
 /**
  * Klarna api integration abstract
  *
- * @method Klarna_Core_Model_Api_PostPurchaseAbstract setStore(Mage_Core_Model_Store $store)
+ * @method Klarna_Core_Model_Api_PostPurchaseAbstract setStore(?Mage_Core_Model_Store $store)
  * @method Mage_Core_Model_Store getStore()
  * @method Klarna_Core_Model_Api_PostPurchaseAbstract setConfig(Varien_Object $config)
  * @method Varien_Object getConfig()
@@ -25,6 +25,7 @@ class Klarna_Core_Model_Api_PostPurchaseAbstract extends Klarna_Core_Model_Api_A
      *
      * @return Klarna_Core_Model_Api_Response
      */
+    #[\Override]
     public function acknowledgeOrder($orderId)
     {
         return new Klarna_Core_Model_Api_Response();
@@ -39,6 +40,7 @@ class Klarna_Core_Model_Api_PostPurchaseAbstract extends Klarna_Core_Model_Api_A
      *
      * @return Klarna_Core_Model_Api_Response
      */
+    #[\Override]
     public function updateMerchantReferences($orderId, $reference1, $reference2 = null)
     {
         return new Klarna_Core_Model_Api_Response();
@@ -53,6 +55,7 @@ class Klarna_Core_Model_Api_PostPurchaseAbstract extends Klarna_Core_Model_Api_A
      *
      * @return Klarna_Core_Model_Api_Response
      */
+    #[\Override]
     public function capture($orderId, $amount, $invoice = null)
     {
         return new Klarna_Core_Model_Api_Response();
@@ -67,6 +70,7 @@ class Klarna_Core_Model_Api_PostPurchaseAbstract extends Klarna_Core_Model_Api_A
      *
      * @return Klarna_Core_Model_Api_Response
      */
+    #[\Override]
     public function refund($orderId, $amount, $creditMemo = null)
     {
         return new Klarna_Core_Model_Api_Response();
@@ -79,6 +83,7 @@ class Klarna_Core_Model_Api_PostPurchaseAbstract extends Klarna_Core_Model_Api_A
      *
      * @return Klarna_Core_Model_Api_Response
      */
+    #[\Override]
     public function cancel($orderId)
     {
         return new Klarna_Core_Model_Api_Response();
@@ -91,6 +96,7 @@ class Klarna_Core_Model_Api_PostPurchaseAbstract extends Klarna_Core_Model_Api_A
      *
      * @return Klarna_Core_Model_Api_Response
      */
+    #[\Override]
     public function release($orderId)
     {
         return new Klarna_Core_Model_Api_Response();
@@ -103,6 +109,7 @@ class Klarna_Core_Model_Api_PostPurchaseAbstract extends Klarna_Core_Model_Api_A
      *
      * @return Klarna_Core_Model_Api_Response
      */
+    #[\Override]
     public function getOrder($orderId)
     {
         return new Klarna_Core_Model_Api_Response();

@@ -16,7 +16,7 @@ class Klarna_Payments_Model_Observer
      * Changing the klarna payment code to its default
      */
     #[\Maho\Config\Observer('sales_quote_payment_import_data_before', type: 'singleton', id: 'klarna_payments_method')]
-    public function adjustPaymentMethodCode(Varien_Event_Observer $observer)
+    public function adjustPaymentMethodCode(Varien_Event_Observer $observer): void
     {
         /** @var Varien_Object $input */
         $input = $observer->getData()['input'];
@@ -45,13 +45,15 @@ class Klarna_Payments_Model_Observer
      * This method will trigger the email sending even though there is a redirect
      */
     #[\Maho\Config\Observer('checkout_submit_all_after', type: 'singleton', id: 'klarna_payments_send_email')]
-    public function checkoutSubmitAfterAllSendOrderEmail(Varien_Event_Observer $observer)
+    public function checkoutSubmitAfterAllSendOrderEmail(Varien_Event_Observer $observer): void
     {
         /** @var Mage_Sales_Model_Order $order */
         $order = $observer->getOrder();
+        $payment = $order->getPayment();
 
-        if (!$order->getEmailSent() &&
-            $order->getPayment()->getMethod() === 'klarna_payments' &&
+        if ($payment &&
+            !$order->getEmailSent() &&
+            $payment->getMethod() === 'klarna_payments' &&
             $order->getState() === Mage_Sales_Model_Order::STATE_PROCESSING) {
 
             $order->sendNewOrderEmail();
@@ -62,7 +64,7 @@ class Klarna_Payments_Model_Observer
      * Clear Klarna Payment session variables when the checkout session is cleared
      */
     #[\Maho\Config\Observer('checkout_quote_destroy', type: 'singleton', id: 'klarna_payments_checkout_session_clear')]
-    public function checkoutSessionClear(Varien_Event_Observer $observer)
+    public function checkoutSessionClear(Varien_Event_Observer $observer): void
     {
         $checkoutSession = Mage::getSingleton('checkout/session');
         $checkoutSession->setKlarnaPaymentsPayloadToken(null);
@@ -71,13 +73,13 @@ class Klarna_Payments_Model_Observer
 
     /**
      * Update User-Agent with module version info
-     *
-     * @param $event
      */
     #[\Maho\Config\Observer('klarna_core_client_user_agent_string', id: 'klarna_payments_ua')]
-    public function klarnaCoreClientUserAgentString($event)
+    public function klarnaCoreClientUserAgentString(Varien_Event_Observer $event): void
     {
-        $version = Mage::getConfig()->getModuleConfig('Klarna_Payments')->version;
+        /** @var Mage_Core_Model_Config $config */
+        $config = Mage::getConfig();
+        $version = $config->getModuleConfig('Klarna_Payments')->version;
         $versionObj = $event->getVersionStringObject();
         $verString = $versionObj->getVersionString();
         $verString .= ";Klarna_Payments_v{$version}";
@@ -89,7 +91,7 @@ class Klarna_Payments_Model_Observer
      * validate order total for OSC checkout
      */
     #[\Maho\Config\Observer('klarna_payments_request_create_after', type: 'singleton', id: 'klarna_check_order_total_osc')]
-    public function checkOrderTotalForOsc(Varien_Event_Observer $observer)
+    public function checkOrderTotalForOsc(Varien_Event_Observer $observer): void
     {
         $requestObject = $observer->getRequestObject();
         $request = $requestObject->getRequestBody();
@@ -112,7 +114,7 @@ class Klarna_Payments_Model_Observer
      * record selected payment type
      */
     #[\Maho\Config\Observer('checkout_submit_all_after', type: 'singleton', id: 'klarna_payments_record_payment_type')]
-    public function recordPaymentType(Varien_Event_Observer $observer)
+    public function recordPaymentType(Varien_Event_Observer $observer): void
     {
         $klarnaKeyStart = 'klarna_payments_';
         $checkoutSession = Mage::getSingleton('checkout/session');

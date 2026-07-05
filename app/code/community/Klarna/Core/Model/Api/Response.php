@@ -21,6 +21,7 @@ class Klarna_Core_Model_Api_Response extends Varien_Object
     /**
      * Build the default values for the object
      */
+    #[\Override]
     protected function _construct()
     {
         $this->setData(

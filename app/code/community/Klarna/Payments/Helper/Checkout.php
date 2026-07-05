@@ -62,7 +62,7 @@ class Klarna_Payments_Helper_Checkout extends Mage_Core_Helper_Abstract
     {
         $result = false;
         if ($klarnaQuote->getAuthorizationToken()) {
-            $response = Mage::helper('klarna_core')->getPurchaseApiInstance('klarna_payments')
+            $response = $this->getPurchaseApiInstance()
                 ->cancelAuthorization($klarnaQuote->getAuthorizationToken());
 
             if (!$response->getIsSuccessful()) {
@@ -79,7 +79,7 @@ class Klarna_Payments_Helper_Checkout extends Mage_Core_Helper_Abstract
                 $result = true;
             }
 
-            $klarnaQuote->setAuthorizationToken(null);
+            $klarnaQuote->setData('authorization_token');
             $klarnaQuote->save();
         }
 
@@ -207,14 +207,18 @@ class Klarna_Payments_Helper_Checkout extends Mage_Core_Helper_Abstract
 
             $klarnaCheckoutId = $this->getKlarnaQuote()->getSessionId();
             if (!is_null($klarnaCheckoutId)) {
-                $this->_klarnaPayments = $this->getPurchaseApiInstance()->readSession($klarnaCheckoutId);
-                $this->updatePaymentMethodCategories($this->_klarnaPayments->getPaymentMethodCategories());
+                /** @var Klarna_Core_Model_Api_Rest_Client_Response $session */
+                $session = $this->getPurchaseApiInstance()->readSession($klarnaCheckoutId);
+                $this->_klarnaPayments = $session;
+                $this->updatePaymentMethodCategories($session->getPaymentMethodCategories());
             }
         } elseif (null === $this->_klarnaPayments) {
             $klarnaCheckoutId = $this->getKlarnaQuote()->getSessionId();
             if (!is_null($klarnaCheckoutId)) {
-                $this->_klarnaPayments = $this->getPurchaseApiInstance()->readSession($klarnaCheckoutId);
-                $this->updatePaymentMethodCategories($this->_klarnaPayments->getPaymentMethodCategories());
+                /** @var Klarna_Core_Model_Api_Rest_Client_Response $session */
+                $session = $this->getPurchaseApiInstance()->readSession($klarnaCheckoutId);
+                $this->_klarnaPayments = $session;
+                $this->updatePaymentMethodCategories($session->getPaymentMethodCategories());
             } else {
                 $this->_klarnaPayments = new Varien_Object();
             }
@@ -233,9 +237,9 @@ class Klarna_Payments_Helper_Checkout extends Mage_Core_Helper_Abstract
         if (!$this->_inQuoteUpdate && $this->getQuote() instanceof Mage_Sales_Model_Quote) {
             $this->_inQuoteUpdate = true;
             if (!$this->getQuote()->isVirtual()) {
-                $this->getQuote()->getShippingAddress()->setCollectShippingRates(true);
+                $this->getQuote()->getShippingAddress()->setCollectShippingRates(1);
             } else {
-                $this->getQuote()->getBillingAddress()->setCollectShippingRates(true);
+                $this->getQuote()->getBillingAddress()->setCollectShippingRates(1);
             }
 
             $this->getQuote()->collectTotals();
@@ -379,7 +383,9 @@ class Klarna_Payments_Helper_Checkout extends Mage_Core_Helper_Abstract
      */
     public function getPurchaseApiInstance()
     {
-        return Mage::helper('klarna_core')->getPurchaseApiInstance('klarna_payments');
+        /** @var Klarna_Payments_Model_Api_Kasper_Purchase $instance */
+        $instance = Mage::helper('klarna_core')->getPurchaseApiInstance('klarna_payments');
+        return $instance;
     }
 
     /**

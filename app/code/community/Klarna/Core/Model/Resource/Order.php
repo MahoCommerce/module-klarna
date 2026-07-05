@@ -16,7 +16,8 @@ class Klarna_Core_Model_Resource_Order extends Mage_Core_Model_Resource_Db_Abstr
     /**
      * Init
      */
-    protected function _construct()
+    #[\Override]
+    protected function _construct(): void
     {
         $this->_init('klarna_core/order', 'klarna_order_id');
     }

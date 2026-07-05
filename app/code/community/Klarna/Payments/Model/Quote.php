@@ -26,6 +26,7 @@ class Klarna_Payments_Model_Quote extends Mage_Core_Model_Abstract
     /**
      * Init
      */
+    #[\Override]
     protected function _construct()
     {
         $this->_init('klarna_payments/quote');
@@ -51,7 +52,9 @@ class Klarna_Payments_Model_Quote extends Mage_Core_Model_Abstract
      */
     public function loadActiveByQuote(Mage_Sales_Model_Quote $quote, $paymentMethod = 'klarna_payments')
     {
-        $this->_getResource()->loadActive($this, $quote->getId(), $paymentMethod);
+        /** @var Klarna_Payments_Model_Resource_Quote $resource */
+        $resource = $this->_getResource();
+        $resource->loadActive($this, (int) $quote->getId(), $paymentMethod);
         $this->_afterLoad();
 
         return $this;
@@ -66,7 +69,9 @@ class Klarna_Payments_Model_Quote extends Mage_Core_Model_Abstract
      */
     public function loadActiveByQuoteId($quoteId, $paymentMethod = 'klarna_payments')
     {
-        $this->_getResource()->loadActive($this, $quoteId, $paymentMethod);
+        /** @var Klarna_Payments_Model_Resource_Quote $resource */
+        $resource = $this->_getResource();
+        $resource->loadActive($this, $quoteId, $paymentMethod);
         $this->_afterLoad();
 
         return $this;

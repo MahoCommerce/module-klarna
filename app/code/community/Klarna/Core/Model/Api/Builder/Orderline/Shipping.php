@@ -30,7 +30,7 @@ class Klarna_Core_Model_Api_Builder_Orderline_Shipping extends Klarna_Core_Model
         if ($object instanceof Mage_Sales_Model_Quote) {
             $totals = $object->getTotals();
             if (isset($totals['shipping'])) {
-                /** @var Mage_Sales_Model_Quote_Address_Total_Shipping $total */
+                /** @var Mage_Sales_Model_Quote_Address_Total $total */
                 $total   = $totals['shipping'];
                 $address = $total->getAddress();
                 $amount  = $address->getBaseShippingAmount();
@@ -119,6 +119,7 @@ class Klarna_Core_Model_Api_Builder_Orderline_Shipping extends Klarna_Core_Model
     {
         $store     = $object->getStore();
         $taxCalc   = Mage::getModel('tax/calculation');
+        /** @phpstan-ignore argument.type, argument.type (invoice/creditmemo return Order_Address, runtime-compatible with core getRateRequest which only uses magic getters) */
         $request   = $taxCalc->getRateRequest($object->getShippingAddress(), $object->getBillingAddress(), $object->getCustomerTaxClassId(), $store);
         $taxRateId = Mage::getStoreConfig(Mage_Tax_Model_Config::CONFIG_XML_PATH_SHIPPING_TAX_CLASS, $store);
 
