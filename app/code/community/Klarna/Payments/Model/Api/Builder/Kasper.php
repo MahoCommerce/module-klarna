@@ -343,7 +343,7 @@ class Klarna_Payments_Model_Api_Builder_Kasper extends Klarna_Core_Model_Api_Bui
     {
         $customerData = [];
         if ($quote->getCustomerDob()) {
-            $customerData['date_of_birth'] = Varien_Date::formatDate(strtotime($quote->getCustomerDob()), false);
+            $customerData['date_of_birth'] = date('Y-m-d', strtotime($quote->getCustomerDob()));
         }
 
         $dobFromOsc = $this->extractDOBFromRequest();
@@ -379,7 +379,7 @@ class Klarna_Payments_Model_Api_Builder_Kasper extends Klarna_Core_Model_Api_Bui
         if ($requestData) {
             if (!empty($requestData['day']) && !empty($requestData['month']) && !empty($requestData['year'])) {
                 $date = $requestData['year'] . '-' . $requestData['month'] . '-' . $requestData['day'];
-                return Varien_Date::formatDate(strtotime($date), false);
+                return date('Y-m-d', strtotime($date));
             }
         }
         return false;
@@ -390,7 +390,7 @@ class Klarna_Payments_Model_Api_Builder_Kasper extends Klarna_Core_Model_Api_Bui
      */
     public function getAttachmentData()
     {
-        /** @var Klarna_Kco_Model_Checkout_Attachment_Abstract $model */
+        /** @var Klarna_Payments_Model_Payment_Attachment_Abstract $model */
         foreach ($this->getAttachmentDataCollector()->getCollectors() as $model) {
             $model->fetch($this);
         }

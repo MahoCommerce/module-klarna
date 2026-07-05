@@ -344,7 +344,7 @@ class Klarna_Core_Model_Api_Builder_Abstract extends Varien_Object
     {
         if (!$quote->getCustomerIsGuest() && $quote->getCustomerDob()) {
             return [
-                'date_of_birth' => Varien_Date::formatDate(strtotime($quote->getCustomerDob()), false),
+                'date_of_birth' => date('Y-m-d', strtotime($quote->getCustomerDob())),
             ];
         }
 

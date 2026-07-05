@@ -15,7 +15,7 @@ class Klarna_Core_Model_Api_Builder_Orderline_Customerbalance extends Klarna_Cor
     /**
      * Collect totals process.
      *
-     * @param Klarna_Kco_Model_Api_Builder_Abstract $checkout
+     * @param Klarna_Core_Model_Api_Builder_Abstract $checkout
      *
      * @return $this
      */
@@ -50,7 +50,7 @@ class Klarna_Core_Model_Api_Builder_Orderline_Customerbalance extends Klarna_Cor
     /**
      * Add grand total information to address
      *
-     * @param Klarna_Kco_Model_Api_Builder_Abstract $checkout
+     * @param Klarna_Core_Model_Api_Builder_Abstract $checkout
      *
      * @return $this
      */
