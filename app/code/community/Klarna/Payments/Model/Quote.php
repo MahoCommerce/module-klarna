@@ -83,9 +83,7 @@ class Klarna_Payments_Model_Quote extends Mage_Core_Model_Abstract
      */
     public function setPaymentMethodCategories($values)
     {
-        if (is_null($values)) {
-            $values = [];
-        }
+        $values ??= [];
         $json = json_encode($values);
         $this->setData('payment_method_categories', $json);
 

@@ -146,9 +146,7 @@ class Klarna_Core_Helper_Data extends Mage_Core_Helper_Abstract
             throw new Klarna_Core_Exception(sprintf('Api version not set for store %s', $storeModel->getFrontendName()));
         }
 
-        if (!isset($this->_cacheStoreApiVersion[$version])) {
-            $this->_cacheStoreApiVersion[$version] = $this->getApiVersion($version);
-        }
+        $this->_cacheStoreApiVersion[$version] ??= $this->getApiVersion($version);
 
         return $this->_cacheStoreApiVersion[$version];
     }
@@ -333,9 +331,7 @@ class Klarna_Core_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getPurchaseApiType($code = null)
     {
-        if (null === $this->_cachePurchaseApiTypes) {
-            $this->_cachePurchaseApiTypes = $this->_getXpathAsArray(self::XPATH_API_PURCHASE_TYPES);
-        }
+        $this->_cachePurchaseApiTypes ??= $this->_getXpathAsArray(self::XPATH_API_PURCHASE_TYPES);
 
         if (null !== $code) {
             if (!isset($this->_cachePurchaseApiTypes[$code])) {
@@ -360,9 +356,7 @@ class Klarna_Core_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getPostPurchaseApiType($code = null)
     {
-        if (null === $this->_cachePostPurchaseApiTypes) {
-            $this->_cachePostPurchaseApiTypes = $this->_getXpathAsArray(self::XPATH_API_POST_PURCHASE_TYPES);
-        }
+        $this->_cachePostPurchaseApiTypes ??= $this->_getXpathAsArray(self::XPATH_API_POST_PURCHASE_TYPES);
 
         if (null !== $code) {
             if (!isset($this->_cachePostPurchaseApiTypes[$code])) {
