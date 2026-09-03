@@ -160,9 +160,7 @@ class Klarna_Core_Model_Api_Rest_Client_Request extends Varien_Object
             }
         }
 
-        if (null === $format) {
-            $format = $this->getDefaultParamFormat();
-        }
+        $format ??= $this->getDefaultParamFormat();
 
         switch ($format) {
             case self::REQUEST_PARAMS_FORMAT_TYPE_JSON:

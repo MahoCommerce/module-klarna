@@ -191,12 +191,10 @@ class Klarna_Core_Model_Api_Builder_Abstract extends Varien_Object
      */
     public function getOrderLinesCollector()
     {
-        if (null === $this->_orderLineCollector) {
-            $this->_orderLineCollector = Mage::getSingleton(
-                'klarna_core/api_builder_orderline_collector',
-                ['store' => $this->getObject()->getStore()],
-            );
-        }
+        $this->_orderLineCollector ??= Mage::getSingleton(
+            'klarna_core/api_builder_orderline_collector',
+            ['store' => $this->getObject()->getStore()],
+        );
 
         return $this->_orderLineCollector;
     }

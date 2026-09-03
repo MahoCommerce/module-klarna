@@ -317,9 +317,7 @@ class Klarna_Core_NotificationController extends Mage_Core_Controller_Front_Acti
      */
     protected function _sendBadRequestResponse($message = null): void
     {
-        if (null === $message) {
-            $message = $this->_helper->__('Bad request');
-        }
+        $message ??= $this->_helper->__('Bad request');
 
         if (is_array($message)) {
             $message = implode('\n', $message);
