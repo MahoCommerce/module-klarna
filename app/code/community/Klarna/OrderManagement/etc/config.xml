@@ -8,7 +8,7 @@ SPDX-License-Identifier: Apache-2.0
 <config>
     <modules>
         <Klarna_OrderManagement>
-            <version>1.2.2</version>
+            <version>1.2.3</version>
         </Klarna_OrderManagement>
     </modules>
     <global>

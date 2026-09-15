@@ -8,7 +8,7 @@ SPDX-License-Identifier: Apache-2.0
 <config>
     <modules>
         <Klarna_Payments>
-            <version>4.4.5</version>
+            <version>4.4.6</version>
         </Klarna_Payments>
     </modules>
     <global>
