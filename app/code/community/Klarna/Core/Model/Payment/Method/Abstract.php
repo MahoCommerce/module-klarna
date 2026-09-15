@@ -15,6 +15,7 @@ class Klarna_Core_Model_Payment_Method_Abstract extends Mage_Payment_Model_Metho
     /**
      * Availability options
      */
+    #[\Override]
     protected $_isInitializeNeeded = true;
 
     /**
