@@ -12,27 +12,44 @@
  */
 class Klarna_Payments_Model_Payment_Payments extends Klarna_Core_Model_Payment_Method_Abstract
 {
+    #[\Override]
     protected $_code          = 'klarna_payments';
+    #[\Override]
     protected $_formBlockType = 'klarna_payments/form_payments';
+    #[\Override]
     protected $_infoBlockType = 'klarna_payments/info_payments';
 
     /**
      * Availability options
      */
+    #[\Override]
     protected $_isGateway                 = false;
+    #[\Override]
     protected $_canOrder                  = false;
+    #[\Override]
     protected $_canAuthorize              = true;
+    #[\Override]
     protected $_canCapture                = true;
+    #[\Override]
     protected $_canCapturePartial         = true;
+    #[\Override]
     protected $_canRefund                 = true;
+    #[\Override]
     protected $_canRefundInvoicePartial   = true;
+    #[\Override]
     protected $_canVoid                   = true;
+    #[\Override]
     protected $_canUseInternal            = false;
+    #[\Override]
     protected $_canUseCheckout            = true;
     protected bool $_canUseForMultishipping = false;
+    #[\Override]
     protected $_canFetchTransactionInfo   = true;
+    #[\Override]
     protected $_canCreateBillingAgreement = false;
+    #[\Override]
     protected $_canReviewPayment          = false;
+    #[\Override]
     protected $_isInitializeNeeded        = false;
 
     /**
