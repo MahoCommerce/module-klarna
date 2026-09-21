@@ -23,6 +23,7 @@ class Klarna_Core_Model_Api_Builder_Orderline_Items extends Klarna_Core_Model_Ap
      *
      * @var bool
      */
+    #[\Override]
     protected $_isTotalCollector = false;
 
     /**

@@ -15,6 +15,7 @@ class Klarna_Payments_Model_Api_Kasper_Purchase extends Klarna_Core_Model_Api_Pu
     /**
      * @var string
      */
+    #[\Override]
     protected $_builderType = 'klarna_payments/api_builder_kasper';
 
     /**
