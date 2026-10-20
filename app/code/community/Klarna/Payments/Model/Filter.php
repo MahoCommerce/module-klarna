@@ -25,7 +25,7 @@ class Klarna_Payments_Model_Filter
     public function filter($value)
     {
         if (preg_match_all(Varien_Filter_Template::CONSTRUCTION_PATTERN, $value, $constructions, PREG_SET_ORDER)) {
-            foreach ($constructions as $index => $construction) {
+            foreach ($constructions as $construction) {
                 $method = $construction[1] . 'Directive';
                 $replacedValue = $value;
                 if (method_exists($this, $method)) {
