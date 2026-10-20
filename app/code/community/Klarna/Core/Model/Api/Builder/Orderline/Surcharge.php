@@ -38,8 +38,6 @@ class Klarna_Core_Model_Api_Builder_Orderline_Surcharge extends Klarna_Core_Mode
         $reference = [];
 
         foreach ($object->getAllItems() as $item) {
-            $qtyMultiplier = 1;
-
             // Order item checks
             if (($item instanceof Mage_Sales_Model_Order_Invoice_Item
                 || $item instanceof Mage_Sales_Model_Order_Creditmemo_Item)
@@ -84,16 +82,13 @@ class Klarna_Core_Model_Api_Builder_Orderline_Surcharge extends Klarna_Core_Mode
                     continue;
                 }
 
-                // Get quantity multiplier for bundle products
+                // Skip if child of a non bundle product or of a bundle product with a fixed price type
                 if ($item->getParentItemId() && ($parentItem = $object->getItemById($item->getParentItemId()))) {
-                    // Skip if non bundle product or if bundled product with a fixed price type
                     if (Mage_Catalog_Model_Product_Type::TYPE_BUNDLE != $parentItem->getProductType()
                         || Mage_Bundle_Model_Product_Price::PRICE_TYPE_FIXED == $parentItem->getProduct()->getPriceType()
                     ) {
                         continue;
                     }
-
-                    $qtyMultiplier = $parentItem->getQty();
                 }
             }
 
