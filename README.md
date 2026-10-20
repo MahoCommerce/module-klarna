@@ -24,7 +24,7 @@ See https://developers.klarna.com/documentation/klarna-payments/
 ## Installation
 
 ```bash
-composer require fballiano/module-klarna
+composer require mahocommerce/module-klarna
 ```
 
 Clear the cache after installation:

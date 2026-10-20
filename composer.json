@@ -1,5 +1,5 @@
 {
-    "name": "fballiano/module-klarna",
+    "name": "mahocommerce/module-klarna",
     "description": "Klarna Payments integration for Maho",
     "type": "maho-module",
     "license": "Apache-2.0",
