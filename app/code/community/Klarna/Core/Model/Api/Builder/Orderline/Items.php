@@ -174,14 +174,14 @@ class Klarna_Core_Model_Api_Builder_Orderline_Items extends Klarna_Core_Model_Ap
      */
     protected function getImageUrl($product)
     {
-        if (!$product->getSmallImage()) {
+        if (!$product->getImage()) {
             return null;
         }
 
         /** @var Mage_Core_Model_Store $store */
         $store = Mage::app()->getStore($product->getStoreId());
         $baseUrl = $store->getBaseUrl(Mage_Core_Model_Store::URL_TYPE_MEDIA);
-        return $baseUrl . 'catalog/product' . $product->getSmallImage();
+        return $baseUrl . 'catalog/product' . $product->getImage();
     }
 
     /**

@@ -263,11 +263,13 @@ class Klarna_Payments_Model_Payment_Payments extends Klarna_Core_Model_Payment_M
     /**
      * Get redirect url
      *
-     * @return string
+     * @return string|null
      */
-    public function getOrderPlaceRedirectUrl()
+    #[\Override]
+    public function getOrderPlaceRedirectUrl(): ?string
     {
-        return Mage::registry('klarna_payments_redirect_url');
+        $url = Mage::registry('klarna_payments_redirect_url');
+        return is_string($url) ? $url : null;
     }
 
     /**

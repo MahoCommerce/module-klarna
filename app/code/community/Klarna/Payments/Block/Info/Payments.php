@@ -48,7 +48,7 @@ class Klarna_Payments_Block_Info_Payments extends Mage_Payment_Block_Info
                     $this->helper('klarna_payments')->__('Payment Method'),
                     $this->helper('klarna_payments')->getKlarnaPaymentNameByType(
                         $info->getAdditionalInformation('klarna_payment_type'),
-                        $order->getQuoteId(),
+                        (int) $order->getQuoteId(),
                     ),
                 );
 

@@ -77,7 +77,7 @@ class Klarna_OrderManagement_Model_Api_Kasper_PostPurchase extends Klarna_Core_M
         if ($invoice instanceof Mage_Sales_Model_Order_Invoice) {
             /** @var Mage_Sales_Model_Order_Payment $payment */
             $payment = $invoice->getOrder()->getPayment();
-            $paymentMethod = $payment->getMethod();
+            $paymentMethod = (string) $payment->getMethod();
             $orderItems    = $this->getHelper()
                 ->getPurchaseApiInstance($paymentMethod, $invoice->getStore())
                 ->getGenerator()
@@ -238,7 +238,7 @@ class Klarna_OrderManagement_Model_Api_Kasper_PostPurchase extends Klarna_Core_M
         if ($creditMemo instanceof Mage_Sales_Model_Order_Creditmemo) {
             /** @var Mage_Sales_Model_Order_Payment $payment */
             $payment = $creditMemo->getOrder()->getPayment();
-            $paymentMethod = $payment->getMethod();
+            $paymentMethod = (string) $payment->getMethod();
             $orderItems    = $this->getHelper()
                 ->getPurchaseApiInstance($paymentMethod, $creditMemo->getStore())
                 ->getGenerator()
