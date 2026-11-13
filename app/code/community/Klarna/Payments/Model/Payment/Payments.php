@@ -262,8 +262,6 @@ class Klarna_Payments_Model_Payment_Payments extends Klarna_Core_Model_Payment_M
 
     /**
      * Get redirect url
-     *
-     * @return string|null
      */
     #[\Override]
     public function getOrderPlaceRedirectUrl(): ?string
