@@ -33,6 +33,9 @@ class Klarna_Core_Model_Api_Builder_Orderline_Shipping extends Klarna_Core_Model
                 /** @var Mage_Sales_Model_Quote_Address_Total $total */
                 $total   = $totals['shipping'];
                 $address = $total->getAddress();
+                if ($address === null) {
+                    return $this;
+                }
                 $amount  = $address->getBaseShippingAmount();
 
                 if ($helper->getSeparateTaxLine($object->getStore())) {

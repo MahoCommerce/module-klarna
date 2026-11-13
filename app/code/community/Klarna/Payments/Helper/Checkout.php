@@ -237,9 +237,9 @@ class Klarna_Payments_Helper_Checkout extends Mage_Core_Helper_Abstract
         if (!$this->_inQuoteUpdate && $this->getQuote() instanceof Mage_Sales_Model_Quote) {
             $this->_inQuoteUpdate = true;
             if (!$this->getQuote()->isVirtual()) {
-                $this->getQuote()->getShippingAddress()->setCollectShippingRates(1);
+                $this->getQuote()->getShippingAddress()->setCollectShippingRates(true);
             } else {
-                $this->getQuote()->getBillingAddress()->setCollectShippingRates(1);
+                $this->getQuote()->getBillingAddress()->setCollectShippingRates(true);
             }
 
             $this->getQuote()->collectTotals();

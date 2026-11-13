@@ -219,7 +219,7 @@ class Klarna_Core_NotificationController extends Mage_Core_Controller_Front_Acti
                 $api = $this->_helper->getPostPurchaseApiInstance($store);
 
                 // Update order references
-                $api->updateMerchantReferences($sessionId, $order->getIncrementId());
+                $api->updateMerchantReferences($sessionId, (string) $order->getIncrementId());
 
                 // Acknowledge order
                 if ($order->getState() != Mage_Sales_Model_Order::STATE_PAYMENT_REVIEW

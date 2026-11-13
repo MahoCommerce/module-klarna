@@ -169,7 +169,7 @@ class Klarna_Core_Model_Payment_Method_Abstract extends Mage_Payment_Model_Metho
         $order = $payment->getOrder();
         $store = $this->getStore();
 
-        if ($this->_helper->getStoreApiVersionOptions($store)->getPaymentReview()) {
+        if ($this->_helper->getStoreApiVersionOptions(Mage::app()->getStore($store))->getPaymentReview()) {
             if (null === $transactionId) {
                 $klarnaOrder   = Mage::getModel('klarna_core/order')->loadByOrder($order);
                 $transactionId = $klarnaOrder->getReservationId();
@@ -317,7 +317,7 @@ class Klarna_Core_Model_Payment_Method_Abstract extends Mage_Payment_Model_Metho
     public function getPurchaseApi()
     {
         if (!$this->hasData('purchase_api')) {
-            $api = $this->_helper->getPurchaseApiInstance($this->_code, $this->getStore());
+            $api = $this->_helper->getPurchaseApiInstance($this->_code, Mage::app()->getStore($this->getStore()));
             $this->setData('purchase_api', $api);
         }
 
@@ -333,7 +333,7 @@ class Klarna_Core_Model_Payment_Method_Abstract extends Mage_Payment_Model_Metho
     public function getPostPurchaseApi()
     {
         if (!$this->hasData('post_purchase_api')) {
-            $api = $this->_helper->getPostPurchaseApiInstance($this->getStore());
+            $api = $this->_helper->getPostPurchaseApiInstance(Mage::app()->getStore($this->getStore()));
             $this->setData('post_purchase_api', $api);
         }
 

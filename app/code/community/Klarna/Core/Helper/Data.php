@@ -397,12 +397,12 @@ class Klarna_Core_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * Prepare float for API call
      *
-     * @param float $float
+     * @param float|int|null $float
      *
      * @return int
      */
     public function toApiFloat($float)
     {
-        return (int) round($float * 100);
+        return (int) round((float) $float * 100);
     }
 }
