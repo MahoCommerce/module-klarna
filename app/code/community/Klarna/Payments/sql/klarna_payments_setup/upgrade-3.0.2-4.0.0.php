@@ -37,17 +37,10 @@ $installer->run('
     WHERE payment_method LIKE 'klarna_%' 
 ");
 
-$installer->run('
-    DELETE FROM ' . $installer->getTable('core_config_data') . "
-    WHERE path = 'payment/klarna_payments/title'
-    LIMIT 1
-");
-
-$installer->run('
-    DELETE FROM ' . $installer->getTable('core_config_data') . "
-    WHERE path = 'payment/klarna_payments/force_default'
-    LIMIT 1
-");
+$installer->getConnection()->delete(
+    $installer->getTable('core_config_data'),
+    ['path IN (?)' => ['payment/klarna_payments/title', 'payment/klarna_payments/force_default']],
+);
 
 $installer->getConnection()->update($installer->getTable('klarna_payments/quote'), ['payment_method_categories' => '[]']);
 
