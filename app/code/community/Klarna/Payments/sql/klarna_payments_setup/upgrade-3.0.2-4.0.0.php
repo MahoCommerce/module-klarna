@@ -7,6 +7,8 @@
  * @package Klarna_Payments
  */
 
+use Maho\Db\Ddl\Table;
+
 /** @var Mage_Core_Model_Resource_Setup $this */
 $installer = $this;
 
@@ -18,7 +20,7 @@ $installer->getConnection()
         $installer->getTable('klarna_payments/quote'),
         'payment_method_categories',
         [
-            'TYPE'     => Varien_Db_Ddl_Table::TYPE_TEXT,
+            'TYPE'     => Table::TYPE_TEXT,
             'COMMENT'  => 'Payment Method Categories',
             'LENGTH'   => 4096,
             'NULLABLE' => false,

@@ -7,6 +7,8 @@
  * @package Klarna_Payments
  */
 
+use Maho\Db\Ddl\Table;
+
 /** @var Mage_Core_Model_Resource_Setup $this */
 $installer = $this;
 
@@ -19,7 +21,7 @@ $table = $installer->getConnection()
     ->newTable($installer->getTable('klarna_payments/quote'))
     ->addColumn(
         'payments_quote_id',
-        Varien_Db_Ddl_Table::TYPE_INTEGER,
+        Table::TYPE_INTEGER,
         null,
         [
             'identity' => true,
@@ -29,12 +31,12 @@ $table = $installer->getConnection()
         ],
         'Payments Id',
     )
-    ->addColumn('session_id', Varien_Db_Ddl_Table::TYPE_TEXT, 255, [], 'Session Id')
-    ->addColumn('client_token', Varien_Db_Ddl_Table::TYPE_TEXT, '64k', [], 'Client Token')
-    ->addColumn('authorization_token', Varien_Db_Ddl_Table::TYPE_TEXT, 255, [], 'Authorization Token')
+    ->addColumn('session_id', Table::TYPE_TEXT, 255, [], 'Session Id')
+    ->addColumn('client_token', Table::TYPE_TEXT, '64k', [], 'Client Token')
+    ->addColumn('authorization_token', Table::TYPE_TEXT, 255, [], 'Authorization Token')
     ->addColumn(
         'is_active',
-        Varien_Db_Ddl_Table::TYPE_SMALLINT,
+        Table::TYPE_SMALLINT,
         null,
         [
             'nullable' => false,
@@ -44,7 +46,7 @@ $table = $installer->getConnection()
     )
     ->addColumn(
         'quote_id',
-        Varien_Db_Ddl_Table::TYPE_INTEGER,
+        Table::TYPE_INTEGER,
         null,
         [
             'unsigned' => true,
@@ -57,8 +59,8 @@ $table = $installer->getConnection()
         'quote_id',
         $installer->getTable('sales/quote'),
         'entity_id',
-        Varien_Db_Ddl_Table::ACTION_CASCADE,
-        Varien_Db_Ddl_Table::ACTION_CASCADE,
+        Table::ACTION_CASCADE,
+        Table::ACTION_CASCADE,
     )
     ->setComment('Klarna Payments Quote');
 $installer->getConnection()->createTable($table);

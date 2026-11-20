@@ -7,6 +7,8 @@
  * @package Klarna_Core
  */
 
+use Maho\Db\Ddl\Table;
+
 /** @var Mage_Sales_Model_Resource_Setup $this */
 $installer = $this;
 
@@ -18,7 +20,7 @@ $table = $installer->getConnection()
     ->newTable($installer->getTable('klarna_core/order'))
     ->addColumn(
         'klarna_order_id',
-        Varien_Db_Ddl_Table::TYPE_INTEGER,
+        Table::TYPE_INTEGER,
         null,
         [
             'identity' => true,
@@ -28,11 +30,11 @@ $table = $installer->getConnection()
         ],
         'Order Id',
     )
-    ->addColumn('session_id', Varien_Db_Ddl_Table::TYPE_TEXT, 255, [], 'Session Id')
-    ->addColumn('reservation_id', Varien_Db_Ddl_Table::TYPE_TEXT, 255, [], 'Reservation Id')
+    ->addColumn('session_id', Table::TYPE_TEXT, 255, [], 'Session Id')
+    ->addColumn('reservation_id', Table::TYPE_TEXT, 255, [], 'Reservation Id')
     ->addColumn(
         'order_id',
-        Varien_Db_Ddl_Table::TYPE_INTEGER,
+        Table::TYPE_INTEGER,
         null,
         [
             'unsigned' => true,
@@ -42,7 +44,7 @@ $table = $installer->getConnection()
     )
     ->addColumn(
         'is_acknowledged',
-        Varien_Db_Ddl_Table::TYPE_SMALLINT,
+        Table::TYPE_SMALLINT,
         null,
         [
             'nullable' => false,
@@ -55,8 +57,8 @@ $table = $installer->getConnection()
         'order_id',
         $installer->getTable('sales/order'),
         'entity_id',
-        Varien_Db_Ddl_Table::ACTION_CASCADE,
-        Varien_Db_Ddl_Table::ACTION_CASCADE,
+        Table::ACTION_CASCADE,
+        Table::ACTION_CASCADE,
     )
     ->setComment('Klarna Order');
 $installer->getConnection()->createTable($table);
