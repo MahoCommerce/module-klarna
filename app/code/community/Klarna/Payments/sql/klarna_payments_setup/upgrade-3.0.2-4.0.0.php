@@ -7,6 +7,8 @@
  * @package Klarna_Payments
  */
 
+use Maho\Db\Ddl\Table;
+
 /** @var Mage_Core_Model_Resource_Setup $this */
 $installer = $this;
 
@@ -18,7 +20,7 @@ $installer->getConnection()
         $installer->getTable('klarna_payments/quote'),
         'payment_method_categories',
         [
-            'TYPE'     => Varien_Db_Ddl_Table::TYPE_TEXT,
+            'TYPE'     => Table::TYPE_TEXT,
             'COMMENT'  => 'Payment Method Categories',
             'LENGTH'   => 4096,
             'NULLABLE' => false,
@@ -37,17 +39,10 @@ $installer->run('
     WHERE payment_method LIKE 'klarna_%' 
 ");
 
-$installer->run('
-    DELETE FROM ' . $installer->getTable('core_config_data') . "
-    WHERE path = 'payment/klarna_payments/title'
-    LIMIT 1
-");
-
-$installer->run('
-    DELETE FROM ' . $installer->getTable('core_config_data') . "
-    WHERE path = 'payment/klarna_payments/force_default'
-    LIMIT 1
-");
+$installer->getConnection()->delete(
+    $installer->getTable('core_config_data'),
+    ['path IN (?)' => ['payment/klarna_payments/title', 'payment/klarna_payments/force_default']],
+);
 
 $installer->getConnection()->update($installer->getTable('klarna_payments/quote'), ['payment_method_categories' => '[]']);
 

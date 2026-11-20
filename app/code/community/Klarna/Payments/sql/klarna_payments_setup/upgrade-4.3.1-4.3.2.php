@@ -15,7 +15,7 @@ $installer->startSetup();
 $installer->getConnection()->update(
     $installer->getTable('klarna_payments/quote'),
     ['payment_method' => 'klarna_payments'],
-    'payment_method = "klanra_payments"',
+    ['payment_method = ?' => 'klanra_payments'],
 );
 
 $installer->endSetup();
